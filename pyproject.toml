@@ -24,3 +24,6 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/curtains"]
+
+[tool.rye.scripts]
+curtains = "python3 -m curtains"
