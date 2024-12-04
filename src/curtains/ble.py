@@ -36,6 +36,9 @@ def write(args):
 def preset(args):
     asyncio.run(write_services(args.device_address, args.char_uuid, Preset.from_args(args)))
 
+def pause(args):
+    asyncio.run(write_services(args.device_address, args.char_uuid, Pause()))
+
 
 async def listen_service(address: str, char_uuid: str):
     def notification_handler(sender, data):

@@ -8,6 +8,10 @@ class Off(Packet):
     def __init__(self):
         super().__init__(PacketType.POWER, b"\x00")
 
+class Pause(Packet):
+    def __init__(self):
+        super().__init__(PacketType.PRESET, b"\x02\x00")
+
 class Preset(Packet):
     PRESET_ANIMATION = b"\x02"
     @classmethod
