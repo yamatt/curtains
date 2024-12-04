@@ -4,6 +4,8 @@ import base64
 
 from bleak import BleakClient, BleakScanner
 
+from .packet import generate_checksum
+
 
 def scan(args):
     asyncio.run(discover_devices())
@@ -20,6 +22,12 @@ def update(args):
 
 def listen(args):
     asyncio.run(listen_service(args.device_address, args.char_uuid))
+
+def on(args):
+    asyncio.run(write_services(args.device_address, args.char_uuid, bytearray(b'\xaa\x02\x01\x01\x64')))
+
+def off(args):
+    asyncio.run(write_services(args.device_address, args.char_uuid, bytearray(b'\xaa\x02\x01\x00\x64')))
 
 
 async def listen_service(address: str, char_uuid: str):
@@ -51,13 +59,11 @@ async def list_services(address: str):
                 for property in characteristic.properties:
                     print(f"\t\tProperty: {property}")
 
-        # Example: Write data to a characteristic (replace UUID and data)
-        characteristic_uuid = "5833ff02-9b8b-5191-6142-22a4536ef123"
-        data = bytes([0x01, 0xFF, 0x00])  # Example: RGB color
-        await client.write_gatt_char(characteristic_uuid, data)
 
-async def write_services(address: str, char_uuid: str):
-    data = bytes([0x00, 0xFF, 0x00])  # Example: RGB color
+async def write_services(address: str, char_uuid: str, data: bytearray):
+    data_with_checksum = data + generate_checksum(data).to_bytes(1, byteorder='big')
 
     async with BleakClient(address) as client:
-        await client.write_gatt_char(char_uuid, data)
+        await client.write_gatt_char(char_uuid, data_with_checksum)
+
+

@@ -21,9 +21,11 @@ Returns in 10 seconds:
 
 The values are identical
 
-- `\xaa` is likely a header
-- `\x04` is likely a length
-- `\xb2` is likely a checksum
+- First byte is likely a header
+- Second byte is a type value
+- Third byte is a length of the payload
+- The next set of bytes in the length is the payload
+- The last byte is a checksum of sum of all bytes modulo to 256
 
 ### Got some results when listening and pressing the button a few times:
 
@@ -31,3 +33,10 @@ The values are identical
 - `\xaa\x01\x08\x00\x00\x00\x01\x02\x0b\x00d%`
 - `\xaa\x01\x08\x00\x00\x00\x01\x02\x0c\x00d&`
 - `\xaa\x01\x08\x00\x00\x00\x01\x02\r\x00d\`
+
+## Turned them on and off
+
+I wrote `\xaa\x02\x08\x00\x00\x00\x01\x02\x0d\x00\x64` plus checksum to `49535343-8841-43f4-a8d4-ecbe34729bb3` and this turned them off
+
+- `\xaa\x02\x01\x01\x64` turned it back on
+- `\xaa\x02\x01\x00\x64` turned it off
