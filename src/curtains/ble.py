@@ -4,7 +4,8 @@ import base64
 
 from bleak import BleakClient, BleakScanner
 
-from .packet import generate_checksum
+from .packet import Packet
+from .messages import On, Off
 
 
 def scan(args):
@@ -24,10 +25,10 @@ def listen(args):
     asyncio.run(listen_service(args.device_address, args.char_uuid))
 
 def on(args):
-    asyncio.run(write_services(args.device_address, args.char_uuid, bytearray(b'\xaa\x02\x01\x01\x64')))
+    asyncio.run(write_services(args.device_address, args.char_uuid, On()))
 
 def off(args):
-    asyncio.run(write_services(args.device_address, args.char_uuid, bytearray(b'\xaa\x02\x01\x00\x64')))
+    asyncio.run(write_services(args.device_address, args.char_uuid, Off()))
 
 
 async def listen_service(address: str, char_uuid: str):
@@ -60,10 +61,8 @@ async def list_services(address: str):
                     print(f"\t\tProperty: {property}")
 
 
-async def write_services(address: str, char_uuid: str, data: bytearray):
-    data_with_checksum = data + generate_checksum(data).to_bytes(1, byteorder='big')
-
+async def write_services(address: str, char_uuid: str, packet: Packet):
     async with BleakClient(address) as client:
-        await client.write_gatt_char(char_uuid, data_with_checksum)
+        await client.write_gatt_char(char_uuid, packet.to_bytes())
 
 
