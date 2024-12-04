@@ -6,10 +6,18 @@ class PacketType(Enum):
     Enum class representing different types of packets.
     """
     POWER = b"\x02"
+    UNKNOWN = b"\03"
 
 class Packet:
     HEADER = b"\xaa"
     FOOTER = b"\x64"
+
+    @classmethod
+    def from_args(cls, args):
+        return cls(
+            getattr(PacketType, args.type),
+            bytes.fromhex(args.payload)
+        )
 
     def __init__(self, packet_type: PacketType, payload: bytes):
         """

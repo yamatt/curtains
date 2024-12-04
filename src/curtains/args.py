@@ -1,6 +1,7 @@
 from argparse import Namespace, ArgumentParser
 
-from .ble import scan, connect, read, update, listen, on, off
+from .ble import scan, connect, read, update, listen, on, off, write
+from .packet import PacketType
 
 def get_args(args: list = None) -> Namespace:
     parser = ArgumentParser(
@@ -39,6 +40,13 @@ def get_args(args: list = None) -> Namespace:
     listen_parser.add_argument("device_address")
     listen_parser.add_argument("char_uuid")
     listen_parser.set_defaults(func=off)
+
+    listen_parser = subparsers.add_parser("write", help="Turn the lights off.")
+    listen_parser.add_argument("device_address")
+    listen_parser.add_argument("char_uuid")
+    listen_parser.add_argument("type", choices=PacketType.__members__.keys(), type=str.upper)
+    listen_parser.add_argument("payload", help="Payload as hex")
+    listen_parser.set_defaults(func=write)
 
 
     return parser.parse_args(args)

@@ -30,6 +30,9 @@ def on(args):
 def off(args):
     asyncio.run(write_services(args.device_address, args.char_uuid, Off()))
 
+def write(args):
+    asyncio.run(write_services(args.device_address, args.char_uuid, Packet.from_args(args)))
+
 
 async def listen_service(address: str, char_uuid: str):
     def notification_handler(sender, data):
