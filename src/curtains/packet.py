@@ -22,7 +22,8 @@ class Packet:
         self.packet_type = packet_type
         self.payload = payload
 
-    def generate_checksum(self):
+    @property
+    def checksum(self) -> int:
         """
         Generate checksum using the sum method (sum of bytes mod 256).
         
@@ -36,7 +37,7 @@ class Packet:
         return checksum
 
     @property
-    def length(self):
+    def length(self) -> int:
         """
         Get the length of the packet.
 
@@ -45,17 +46,17 @@ class Packet:
         """
         return len(self.payload)
 
-    def to_bytes(self):
+    def to_bytes(self) -> bytes:
         """
         Convert the packet to a byte string.
 
         Returns:
             bytes: The byte string representation of the packet.
         """
-        return self.HEADER + self.packet_type.value + self.length.to_bytes(1, 'big') + self.payload + self.generate_checksum().to_bytes(1, byteorder='big')
+        return self.HEADER + self.packet_type.value + self.length.to_bytes(1, 'big') + self.payload + self.checksum.to_bytes(1, byteorder='big')
 
 
-    def to_str(self):
+    def to_str(self) -> str:
         """
         Convert the packet to a string representation.
 
