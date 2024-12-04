@@ -18,34 +18,34 @@ def get_args(args: list = None) -> Namespace:
 
     update_parser = subparsers.add_parser("read", help="Get data from Character.")
     update_parser.add_argument("device_address")
-    update_parser.add_argument("char_uuid")
+    update_parser.add_argument("char_uuid", help="Characteristic UUID")
     update_parser.set_defaults(func=read)
 
     update_parser = subparsers.add_parser("update", help="Write value to Character.")
     update_parser.add_argument("device_address")
-    update_parser.add_argument("char_uuid")
+    update_parser.add_argument("char_uuid", help="Characteristic UUID")
     update_parser.set_defaults(func=update)
 
     listen_parser = subparsers.add_parser("listen", help="Listen to notifications.")
     listen_parser.add_argument("device_address")
-    listen_parser.add_argument("char_uuid")
+    listen_parser.add_argument("char_uuid", help="Characteristic UUID")
     listen_parser.set_defaults(func=listen)
 
     listen_parser = subparsers.add_parser("on", help="Turn the lights on.")
     listen_parser.add_argument("device_address")
-    listen_parser.add_argument("char_uuid")
+    listen_parser.add_argument("char_uuid", help="Characteristic UUID")
     listen_parser.set_defaults(func=on)
 
     listen_parser = subparsers.add_parser("off", help="Turn the lights off.")
     listen_parser.add_argument("device_address")
-    listen_parser.add_argument("char_uuid")
+    listen_parser.add_argument("char_uuid", help="Characteristic UUID")
     listen_parser.set_defaults(func=off)
 
-    listen_parser = subparsers.add_parser("write", help="Turn the lights off.")
+    listen_parser = subparsers.add_parser("write", help="Write data to characteristic.")
     listen_parser.add_argument("device_address")
-    listen_parser.add_argument("char_uuid")
+    listen_parser.add_argument("char_uuid", help="Characteristic UUID")
     listen_parser.add_argument("type", choices=PacketType.__members__.keys(), type=str.upper)
-    listen_parser.add_argument("payload", help="Payload as hex")
+    listen_parser.add_argument("payload", help="Payload as hex. E.g.: 0201030d")
     listen_parser.set_defaults(func=write)
 
 
