@@ -28,8 +28,24 @@ This lists UUIDs, Characteristics and Properties of specific device.
 rye run curtains connect FF:44:10:22:75:68
 ```
 
+### Turn curtains on and off
+
+On:
+
+```bash
+rye run curtains on FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3
+```
+
+Off:
+
+```bash
+rye run curtains off FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3
+```
+
 ### Change preset
 
 ```bash
-rye run curtains write FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 PRESET 0201030d
+rye run curtains preset FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 2 --brightness 0
 ```
+
+Where `2` is the preset animation type from 1 to 109. And `--brightness` is brightness level from 0 (low brightness, but not off) to 255 (high brightness).

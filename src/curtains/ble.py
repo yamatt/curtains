@@ -5,7 +5,7 @@ import base64
 from bleak import BleakClient, BleakScanner
 
 from .packet import Packet
-from .messages import On, Off
+from .messages import On, Off, Preset
 
 
 def scan(args):
@@ -32,6 +32,9 @@ def off(args):
 
 def write(args):
     asyncio.run(write_services(args.device_address, args.char_uuid, Packet.from_args(args)))
+
+def preset(args):
+    asyncio.run(write_services(args.device_address, args.char_uuid, Preset.from_args(args)))
 
 
 async def listen_service(address: str, char_uuid: str):
@@ -66,6 +69,7 @@ async def list_services(address: str):
 
 async def write_services(address: str, char_uuid: str, packet: Packet):
     async with BleakClient(address) as client:
+        #print("Write value:", packet.to_str())
         await client.write_gatt_char(char_uuid, packet.to_bytes())
 
 
