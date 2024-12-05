@@ -2,6 +2,8 @@
 
 This is a Python library and CLI to control BLE LED curtains.
 
+You can also control the curtains from your browser.
+
 ## Usage
 
 ### Setup
