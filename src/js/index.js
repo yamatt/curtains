@@ -3,5 +3,5 @@ import Bluetooth from "./ble.js";
 
 const controlsEl = document.getElementById("controls");
 
-const controls = Contols(controlsEl);
+const controls = new Contols(controlsEl);
 controls.init();
