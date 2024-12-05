@@ -4,5 +4,24 @@
     <meta charset="utf-8" />
     <title>Curtain Control</title>
   </head>
-  <body></body>
+  <body>
+    <form id="controls">
+      <fieldset>
+        <legend>Device</legend>
+        <input type="text" name="device_address" />
+        <input type="text" name="characteristic_uuid" />
+        <input type="submit" name="connect" value="Connect" />
+      </fieldset>
+      <fieldset>
+        <legend>Power</legend>
+        <input type="submit" name="power" value="On" />
+        <input type="submit" name="power" value="Off" />
+      </fieldset>
+      <fieldset>
+        <legend>Animated Presets</legend>
+        <input type="number" name="preset" min="1" max="109" value="2" />
+        <input type="submit" name="pause" value="Pause" />
+      </fieldset>
+    </form>
+  </body>
 </html>
