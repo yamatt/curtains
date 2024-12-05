@@ -7,8 +7,8 @@ on:
       - main
     paths:
       - ".github/workflows/page.yaml"
-      - "src/html"
-      - "src/js"
+      - "src/html/*"
+      - "src/js/*"
       - "webpack.config.js"
       - "package.json"
 
