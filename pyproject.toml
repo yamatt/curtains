@@ -11,19 +11,15 @@ dependencies = [
 readme = "README.md"
 requires-python = ">= 3.12"
 
+[project.scripts]
+curtains = "curtains.__main__:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.rye]
-managed = true
-dev-dependencies = []
 
 [tool.hatch.metadata]
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/curtains"]
-
-[tool.rye.scripts]
-curtains = "python3 -m curtains"
