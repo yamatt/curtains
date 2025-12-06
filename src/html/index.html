@@ -2,26 +2,163 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Curtain Control</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 0 20px;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      fieldset {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+      }
+      legend {
+        font-weight: bold;
+        color: #555;
+        padding: 0 10px;
+      }
+      input[type="text"],
+      input[type="number"] {
+        padding: 8px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: calc(100% - 20px);
+        box-sizing: border-box;
+      }
+      input[type="submit"],
+      button {
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      input[type="submit"]:hover,
+      button:hover {
+        background-color: #0056b3;
+      }
+      input[type="submit"]:active,
+      button:active {
+        background-color: #004085;
+      }
+      .power-buttons {
+        display: flex;
+        gap: 10px;
+      }
+      .slider-container {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .slider-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #666;
+      }
+      input[type="range"] {
+        width: 100%;
+        margin: 10px 0;
+      }
+      .preset-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .preset-controls input[type="number"] {
+        flex: 1;
+      }
+      label {
+        display: block;
+        margin: 5px 0;
+        font-size: 14px;
+        color: #555;
+      }
+    </style>
   </head>
   <body>
+    <h1>🪟 LED Curtain Control</h1>
     <form id="controls">
       <fieldset>
-        <legend>Device</legend>
-        <input type="text" name="device_address" />
-        <input type="text" name="characteristic_uuid" />
+        <legend>📱 Device Connection</legend>
+        <label for="device_address">Device Name (optional):</label>
+        <input
+          type="text"
+          id="device_address"
+          name="device_address"
+          placeholder="Hello Fairy"
+        />
+        <label for="characteristic_uuid">Characteristic UUID:</label>
+        <input
+          type="text"
+          id="characteristic_uuid"
+          name="characteristic_uuid"
+          placeholder="49535343-8841-43f4-a8d4-ecbe34729bb3"
+        />
         <input type="submit" name="connect" value="Connect" />
       </fieldset>
       <fieldset>
-        <legend>Power</legend>
-        <input type="submit" name="power" value="On" />
-        <input type="submit" name="power" value="Off" />
+        <legend>⚡ Power</legend>
+        <div class="power-buttons">
+          <input type="submit" name="power" value="On" />
+          <input type="submit" name="power" value="Off" />
+        </div>
       </fieldset>
       <fieldset>
-        <legend>Animated Presets</legend>
-        <input type="number" name="preset" min="1" max="109" value="2" />
-        <input type="submit" name="pause" value="Pause" />
+        <legend>✨ Animated Presets</legend>
+        <div class="preset-controls">
+          <div style="flex: 1">
+            <label for="preset">Preset (1-109):</label>
+            <input
+              type="number"
+              id="preset"
+              name="preset"
+              min="1"
+              max="109"
+              value="2"
+            />
+          </div>
+        </div>
+        <div class="slider-container">
+          <label for="brightness">Brightness:</label>
+          <div class="slider-label">
+            <span>Low (0)</span>
+            <span id="brightness-value">255</span>
+            <span>High (255)</span>
+          </div>
+          <input
+            type="range"
+            id="brightness"
+            name="brightness"
+            min="0"
+            max="255"
+            value="255"
+          />
+        </div>
+        <div style="margin-top: 10px">
+          <input type="submit" name="preset_apply" value="Apply Preset" />
+          <input type="submit" name="pause" value="Pause Animation" />
+        </div>
       </fieldset>
     </form>
+    <script>
+      // Update brightness value display
+      document.getElementById("brightness").addEventListener("input", (e) => {
+        document.getElementById("brightness-value").textContent = e.target.value;
+      });
+    </script>
   </body>
 </html>
