@@ -1,7 +1,7 @@
-import Contols from "./controls.js";
+import Controls from "./controls.js";
 import Bluetooth from "./ble.js";
 
 const controlsEl = document.getElementById("controls");
 
-const controls = new Contols(controlsEl);
+const controls = new Controls(controlsEl);
 controls.init();
