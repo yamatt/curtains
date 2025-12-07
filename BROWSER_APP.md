@@ -35,11 +35,13 @@ The app uses the **Web Bluetooth API** to connect directly to your BLE curtain d
 
 ## Usage
 
-1. **Enter Characteristic UUID**: The UUID for your device's control characteristic (e.g., `49535343-8841-43f4-a8d4-ecbe34729bb3`)
+1. **Characteristic UUID**: The UUID field is prepopulated with the common UUID `49535343-8841-43f4-a8d4-ecbe34729bb3`. You can change it if your device uses a different UUID.
 
-2. **Click Connect**: Browser will show a device picker - select your "Hello Fairy" device
+2. **Device Name (Optional)**: Leave empty to see all BLE devices, or enter a specific name (e.g., "Hello Fairy") to filter devices.
 
-3. **Control Your Curtains**:
+3. **Click Connect**: Browser will show a device picker with all available BLE devices (or filtered by name if specified).
+
+4. **Control Your Curtains**:
    - Turn on/off with power buttons
    - Select preset animations (1-109)
    - Adjust brightness (0-255)
