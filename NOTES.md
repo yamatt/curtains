@@ -69,3 +69,5 @@ If the second byte is `00` it pauses the animation.
 The second byte can be any number. There are 109 animations from 01 to 6e.
 
 The third byte is a brightness value from `00` to `ff`. `00` isn't off, but low. `ff` is full brightness.
+
+The fourth byte appears to control animation speed from `00` (slow) to `ff` (fast). Examples in the payload section show 4-byte payloads like `0201030d` where the last byte (0d) is the speed parameter.

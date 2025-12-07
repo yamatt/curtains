@@ -53,6 +53,7 @@ def get_args(args: list = None) -> Namespace:
     listen_parser.add_argument("char_uuid", help="Characteristic UUID")
     listen_parser.add_argument("preset", help="Preset from 1 to 109", type=int)
     listen_parser.add_argument("-b", "--brightness", help="Brightness level from 0 to 255", required=False, default=255, type=int)
+    listen_parser.add_argument("-s", "--speed", help="Animation speed from 0 to 255 (default: 10)", required=False, default=10, type=int)
     listen_parser.set_defaults(func=preset)
 
     listen_parser = subparsers.add_parser("pause", help="Pause preset animation.")
