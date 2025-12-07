@@ -21,6 +21,8 @@ export default class Controls {
       try {
         if (submitter.name === "connect") {
           await this.handleConnect(formData);
+        } else if (submitter.name === "disconnect") {
+          await this.handleDisconnect();
         } else if (submitter.name === "power") {
           await this.handlePower(submitter.value);
         } else if (submitter.name === "pause") {
@@ -120,6 +122,17 @@ export default class Controls {
     this.bluetooth.setCharacteristic(characteristicUuid);
     
     this.showStatus("Connected successfully!", "success");
+  }
+
+  async handleDisconnect() {
+    if (!this.bluetooth.isConnected()) {
+      this.showStatus("No device connected", "warning");
+      return;
+    }
+
+    this.showStatus("Disconnecting...", "info");
+    this.bluetooth.disconnect();
+    this.showStatus("Disconnected successfully. You can now connect to a different device.", "success");
   }
 
   async handlePower(value) {

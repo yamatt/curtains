@@ -99,6 +99,7 @@
           type="text"
           id="device_address"
           name="device_address"
+          value="Hello Fairy"
           placeholder="Hello Fairy"
         />
         <label for="characteristic_uuid">Characteristic UUID:</label>
@@ -108,7 +109,10 @@
           name="characteristic_uuid"
           value="49535343-8841-43f4-a8d4-ecbe34729bb3"
         />
-        <input type="submit" name="connect" value="Connect" />
+        <div class="power-buttons">
+          <input type="submit" name="connect" value="Connect" />
+          <input type="submit" name="disconnect" value="Disconnect" />
+        </div>
       </fieldset>
       <fieldset>
         <legend>⚡ Power</legend>
