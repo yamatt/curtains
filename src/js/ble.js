@@ -71,17 +71,26 @@ export default class Bluetooth {
       // Request device - accept all devices to allow any BLE device to be shown
       // If a device name is provided and not empty, use it as a prefix filter
       let options;
+      // Include multiple common service UUIDs to ensure we can access the characteristics
+      const services = [
+        "49535343-fe7d-4ae5-8fa9-9fafd205e455",  // Custom service UUID
+        "0000180a-0000-1000-8000-00805f9b34fb",  // Device Information Service
+        "0000180f-0000-1000-8000-00805f9b34fb",  // Battery Service  
+        "generic_access",                         // Generic Access
+        "generic_attribute"                       // Generic Attribute
+      ];
+      
       if (deviceName && deviceName.trim() !== "") {
         options = {
           acceptAllDevices: false,
           filters: [{ namePrefix: deviceName }],
-          optionalServices: ["49535343-fe7d-4ae5-8fa9-9fafd205e455"] // Nordic UART Service UUID
+          optionalServices: services
         };
       } else {
         // No name filter - show all BLE devices
         options = {
           acceptAllDevices: true,
-          optionalServices: ["49535343-fe7d-4ae5-8fa9-9fafd205e455"] // Nordic UART Service UUID
+          optionalServices: services
         };
       }
 
@@ -109,22 +118,31 @@ export default class Bluetooth {
    */
   async getCharacteristic() {
     if (!this.characteristic || this.characteristic.uuid !== this.characteristicUuid) {
-      // Get the service
-      const services = await this.server.getPrimaryServices();
-      
-      // Find the characteristic across all services
-      for (const service of services) {
-        const characteristics = await service.getCharacteristics();
-        for (const char of characteristics) {
-          if (char.uuid === this.characteristicUuid) {
-            this.characteristic = char;
-            this.service = service;
-            return this.characteristic;
+      try {
+        // Get all primary services
+        const services = await this.server.getPrimaryServices();
+        
+        // Find the characteristic across all services
+        for (const service of services) {
+          try {
+            const characteristics = await service.getCharacteristics();
+            for (const char of characteristics) {
+              if (char.uuid === this.characteristicUuid) {
+                this.characteristic = char;
+                this.service = service;
+                return this.characteristic;
+              }
+            }
+          } catch (error) {
+            // Skip services that we can't access
+            console.warn(`Could not get characteristics for service ${service.uuid}:`, error);
           }
         }
+      } catch (error) {
+        console.error("Error getting services:", error);
       }
       
-      throw new Error(`Characteristic ${this.characteristicUuid} not found`);
+      throw new Error(`Characteristic ${this.characteristicUuid} not found. The device may not support this characteristic, or you may need to add its service UUID to the optionalServices list in the connect() method.`);
     }
     return this.characteristic;
   }
