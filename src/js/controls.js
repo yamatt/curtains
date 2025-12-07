@@ -100,7 +100,8 @@ export default class Controls {
 
     this.showStatus("Connecting to device...", "info");
     
-    await this.bluetooth.connect(deviceAddress || "Hello Fairy");
+    // Pass the device address (empty string if not provided to show all devices)
+    await this.bluetooth.connect(deviceAddress || "");
     this.bluetooth.setCharacteristic(characteristicUuid);
     
     this.showStatus("Connected successfully!", "success");

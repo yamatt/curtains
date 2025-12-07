@@ -68,12 +68,22 @@ export default class Bluetooth {
    */
   async connect(deviceName = "Hello Fairy") {
     try {
-      // Request device with optional name filter
-      const options = {
-        acceptAllDevices: false,
-        filters: [{ name: deviceName }],
-        optionalServices: ["49535343-fe7d-4ae5-8fa9-9fafd205e455"] // Nordic UART Service UUID
-      };
+      // Request device - accept all devices to allow any BLE device to be shown
+      // If a device name is provided and not empty, use it as a filter
+      let options;
+      if (deviceName && deviceName.trim() !== "") {
+        options = {
+          acceptAllDevices: false,
+          filters: [{ name: deviceName }],
+          optionalServices: ["49535343-fe7d-4ae5-8fa9-9fafd205e455"] // Nordic UART Service UUID
+        };
+      } else {
+        // No name filter - show all BLE devices
+        options = {
+          acceptAllDevices: true,
+          optionalServices: ["49535343-fe7d-4ae5-8fa9-9fafd205e455"] // Nordic UART Service UUID
+        };
+      }
 
       this.device = await navigator.bluetooth.requestDevice(options);
       
