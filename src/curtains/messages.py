@@ -16,7 +16,10 @@ class Preset(Packet):
     PRESET_ANIMATION = b"\x02"
     @classmethod
     def from_args(cls, args):
-        return cls(args.preset, args.brightness)
+        speed = getattr(args, 'speed', 10)  # Default speed if not provided
+        return cls(args.preset, args.brightness, speed)
 
-    def __init__(self, preset: int, brightness: int):
-        super().__init__(PacketType.PRESET, self.PRESET_ANIMATION + preset.to_bytes(1, 'big') + brightness.to_bytes(1, 'big'))
+    def __init__(self, preset: int, brightness: int, speed: int = 10):
+        # Speed parameter appears to be a 4th byte based on NOTES.md examples
+        # Default speed of 10 (0x0a) for backward compatibility
+        super().__init__(PacketType.PRESET, self.PRESET_ANIMATION + preset.to_bytes(1, 'big') + brightness.to_bytes(1, 'big') + speed.to_bytes(1, 'big'))

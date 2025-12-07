@@ -32,13 +32,13 @@ Then open `http://localhost:8080` in your browser.
 
 1. **Characteristic UUID**: The UUID field is prepopulated with the common UUID `49535343-8841-43f4-a8d4-ecbe34729bb3`. You can change it if your device uses a different UUID.
 
-2. **Device Name (Optional)**: Leave empty to see all BLE devices, or enter a specific name (e.g., "Hello Fairy") to filter devices.
+2. **Device Name Prefix (Optional)**: Leave empty to see all BLE devices, or enter a name prefix (e.g., "Hello Fairy") to filter devices. This will match any device whose name starts with the specified text, so "Hello Fairy" will match "Hello Fairy-7df1", "Hello Fairy-a2b3", etc.
 
-3. **Connect**: Click "Connect" to open the browser's device picker showing all available BLE devices (or filtered by name if specified).
+3. **Connect**: Click "Connect" to open the browser's device picker showing all available BLE devices (or filtered by name prefix if specified).
 
 4. **Power Control**: Use the On/Off buttons to turn the curtain lights on or off.
 
-5. **Animated Presets**: Select a preset number (1-109) and adjust the brightness slider (0-255), then click "Apply Preset".
+5. **Animated Presets**: Select a preset number (1-109), adjust the brightness slider (0-255), and optionally adjust the animation speed slider (0-255, default 10). Click "Apply Preset" or simply change the sliders to apply immediately when connected.
 
 6. **Pause Animation**: Click "Pause Animation" to pause the current effect.
 
@@ -96,7 +96,7 @@ uv run curtains off FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3
 ### Change preset
 
 ```bash
-uv run curtains preset FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 2 --brightness 0
+uv run curtains preset FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 2 --brightness 255 --speed 10
 ```
 
-Where `2` is the preset animation type from 1 to 109. And `--brightness` is brightness level from 0 (low brightness, but not off) to 255 (high brightness).
+Where `2` is the preset animation type from 1 to 109. And `--brightness` is brightness level from 0 (low brightness, but not off) to 255 (high brightness). The optional `--speed` parameter controls animation speed from 0 (slow) to 255 (fast), with a default of 10.

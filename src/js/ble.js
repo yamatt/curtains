@@ -52,8 +52,8 @@ export default class Bluetooth {
   /**
    * Build PRESET command packet
    */
-  static buildPresetPacket(preset, brightness) {
-    return Bluetooth.buildPacket(Bluetooth.PACKET_TYPE_PRESET, [0x02, preset, brightness]);
+  static buildPresetPacket(preset, brightness, speed = 10) {
+    return Bluetooth.buildPacket(Bluetooth.PACKET_TYPE_PRESET, [0x02, preset, brightness, speed]);
   }
 
   /**
@@ -69,12 +69,12 @@ export default class Bluetooth {
   async connect(deviceName = "Hello Fairy") {
     try {
       // Request device - accept all devices to allow any BLE device to be shown
-      // If a device name is provided and not empty, use it as a filter
+      // If a device name is provided and not empty, use it as a prefix filter
       let options;
       if (deviceName && deviceName.trim() !== "") {
         options = {
           acceptAllDevices: false,
-          filters: [{ name: deviceName }],
+          filters: [{ namePrefix: deviceName }],
           optionalServices: ["49535343-fe7d-4ae5-8fa9-9fafd205e455"] // Nordic UART Service UUID
         };
       } else {
@@ -164,8 +164,8 @@ export default class Bluetooth {
   /**
    * Set preset animation
    */
-  async setPreset(preset, brightness) {
-    const packet = Bluetooth.buildPresetPacket(preset, brightness);
+  async setPreset(preset, brightness, speed = 10) {
+    const packet = Bluetooth.buildPresetPacket(preset, brightness, speed);
     await this.writePacket(packet);
   }
 
