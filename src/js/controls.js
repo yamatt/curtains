@@ -63,21 +63,6 @@ export default class Controls {
       });
     }
 
-    // Handle speed input change - auto-apply when changed
-    const speedInput = this.el.querySelector('[name="speed"]');
-    if (speedInput) {
-      speedInput.addEventListener("change", async (event) => {
-        if (this.bluetooth.isConnected()) {
-          try {
-            await this.handlePresetFromInput();
-          } catch (error) {
-            this.showStatus(`Error: ${error.message}`, "error");
-            console.error(error);
-          }
-        }
-      });
-    }
-
     this.showStatus("Ready. Click Connect to begin.", "info");
   }
 
@@ -171,7 +156,6 @@ export default class Controls {
 
     const preset = parseInt(formData.get("preset"), 10);
     const brightness = parseInt(formData.get("brightness") || "255", 10);
-    const speed = parseInt(formData.get("speed") || "10", 10);
     
     if (isNaN(preset) || preset < 1 || preset > 109) {
       this.showStatus("Preset must be between 1 and 109", "error");
@@ -182,14 +166,9 @@ export default class Controls {
       this.showStatus("Brightness must be between 0 and 255", "error");
       return;
     }
-    
-    if (isNaN(speed) || speed < 0 || speed > 255) {
-      this.showStatus("Speed must be between 0 and 255", "error");
-      return;
-    }
 
-    this.showStatus(`Setting preset ${preset} with brightness ${brightness} and speed ${speed}...`, "info");
-    await this.bluetooth.setPreset(preset, brightness, speed);
+    this.showStatus(`Setting preset ${preset} with brightness ${brightness}...`, "info");
+    await this.bluetooth.setPreset(preset, brightness);
     this.showStatus(`Preset ${preset} applied successfully`, "success");
   }
 
@@ -197,8 +176,6 @@ export default class Controls {
     const preset = parseInt(this.el.preset.value, 10);
     const brightnessInput = this.el.querySelector('[name="brightness"]');
     const brightness = brightnessInput ? parseInt(brightnessInput.value, 10) : 255;
-    const speedInput = this.el.querySelector('[name="speed"]');
-    const speed = speedInput ? parseInt(speedInput.value, 10) : 10;
     
     if (isNaN(preset) || preset < 1 || preset > 109) {
       return;
@@ -207,13 +184,9 @@ export default class Controls {
     if (isNaN(brightness) || brightness < 0 || brightness > 255) {
       return;
     }
-    
-    if (isNaN(speed) || speed < 0 || speed > 255) {
-      return;
-    }
 
-    this.showStatus(`Setting preset ${preset} with brightness ${brightness} and speed ${speed}...`, "info");
-    await this.bluetooth.setPreset(preset, brightness, speed);
+    this.showStatus(`Setting preset ${preset} with brightness ${brightness}...`, "info");
+    await this.bluetooth.setPreset(preset, brightness);
     this.showStatus(`Preset ${preset} applied successfully`, "success");
   }
 }
