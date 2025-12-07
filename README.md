@@ -30,13 +30,17 @@ Then open `http://localhost:8080` in your browser.
 
 ### Using the App
 
-1. **Connect**: Enter the Characteristic UUID (e.g., `49535343-8841-43f4-a8d4-ecbe34729bb3`) and click "Connect" to select your "Hello Fairy" BLE device.
+1. **Characteristic UUID**: The UUID field is prepopulated with the common UUID `49535343-8841-43f4-a8d4-ecbe34729bb3`. You can change it if your device uses a different UUID.
 
-2. **Power Control**: Use the On/Off buttons to turn the curtain lights on or off.
+2. **Device Name (Optional)**: Leave empty to see all BLE devices, or enter a specific name (e.g., "Hello Fairy") to filter devices.
 
-3. **Animated Presets**: Select a preset number (1-109) and adjust the brightness slider (0-255), then click "Apply Preset".
+3. **Connect**: Click "Connect" to open the browser's device picker showing all available BLE devices (or filtered by name if specified).
 
-4. **Pause Animation**: Click "Pause Animation" to pause the current effect.
+4. **Power Control**: Use the On/Off buttons to turn the curtain lights on or off.
+
+5. **Animated Presets**: Select a preset number (1-109) and adjust the brightness slider (0-255), then click "Apply Preset".
+
+6. **Pause Animation**: Click "Pause Animation" to pause the current effect.
 
 **Note**: The Web Bluetooth API is supported in Chrome, Edge, and Opera browsers. It requires a secure context (HTTPS or localhost).
 
