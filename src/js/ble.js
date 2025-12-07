@@ -142,7 +142,7 @@ export default class Bluetooth {
         console.error("Error getting services:", error);
       }
       
-      throw new Error(`Characteristic ${this.characteristicUuid} not found. Make sure the service containing this characteristic is in the optionalServices list.`);
+      throw new Error(`Characteristic ${this.characteristicUuid} not found. The device may not support this characteristic, or you may need to add its service UUID to the optionalServices list in the connect() method.`);
     }
     return this.characteristic;
   }
