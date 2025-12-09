@@ -73,7 +73,7 @@ the last `3` is a brightness level from 0 to F.
 
 When the first byte is `02` you can select animations
 
-Second byte sets the type of animation.
+Second byte sets which animation.
 
 If the second byte is `00` it pauses the animation.
 
