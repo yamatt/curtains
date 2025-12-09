@@ -67,6 +67,16 @@ This 00 and 01 for solid colour. I can't seem to change the colour.
 `001203BC03` changed color to orange-ish
 
 the last `3` is a brightness level from 0 to F.
+`030701...` is solid colours
+
+`00F003E803` changed colour to blue-ish
+`000003E803` changed colour to red
+`0166019B03` changed color to pink
+`0000000003` changed to white
+`007803E803` changed color to green
+`001203BC03` changed color to orange-ish
+
+the last `3` is a brightness level from 0 to F.
 
 #### Animations
 
@@ -85,8 +95,17 @@ The third byte is a brightness value from `00` to `ff`. `00` isn't off, but low.
 `0309...` is music
 
 `0304...` is preset animation
+<<<<<<< Updated upstream
 
 The fourth byte appears to control animation speed from `00` (slow) to `ff` (fast). Examples in the payload section show 4-byte payloads like `0201030d` where the last byte (0d) is the speed parameter.
+
+`03...` is manual control
+
+`0309...` is music
+
+`0304...` is preset animation
+=======
+>>>>>>> Stashed changes
 
 `03...` is manual control
 
