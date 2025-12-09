@@ -152,6 +152,22 @@
             value="255"
           />
         </div>
+        <div class="slider-container">
+          <label for="speed">Speed:</label>
+          <div class="slider-label">
+            <span>Slow (0)</span>
+            <span id="speed-value">10</span>
+            <span>Fast (255)</span>
+          </div>
+          <input
+            type="range"
+            id="speed"
+            name="speed"
+            min="0"
+            max="255"
+            value="10"
+          />
+        </div>
         <div style="margin-top: 10px">
           <input type="submit" name="preset_apply" value="Apply Preset" />
           <input type="submit" name="pause" value="Pause Animation" />
@@ -162,6 +178,11 @@
       // Update brightness value display
       document.getElementById("brightness").addEventListener("input", (e) => {
         document.getElementById("brightness-value").textContent = e.target.value;
+      });
+      
+      // Update speed value display
+      document.getElementById("speed").addEventListener("input", (e) => {
+        document.getElementById("speed-value").textContent = e.target.value;
       });
     </script>
   </body>
