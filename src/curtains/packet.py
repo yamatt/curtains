@@ -1,12 +1,14 @@
-
 from enum import Enum
+
 
 class PacketType(Enum):
     """
     Enum class representing different types of packets.
     """
+
     POWER = b"\x02"
-    CONTROL = b"\x03"
+    PRESET = b"\x03"
+
 
 class Packet:
     HEADER = b"\xaa"
@@ -14,10 +16,7 @@ class Packet:
 
     @classmethod
     def from_args(cls, args):
-        return cls(
-            getattr(PacketType, args.type),
-            bytes.fromhex(args.payload)
-        )
+        return cls(getattr(PacketType, args.type), bytes.fromhex(args.payload))
 
     def __init__(self, packet_type: PacketType, payload: bytes):
         """
@@ -34,10 +33,10 @@ class Packet:
     def checksum(self) -> int:
         """
         Generate checksum using the sum method (sum of bytes mod 256).
-        
+
         Parameters:
             data (bytes): The byte string to calculate the checksum for.
-            
+
         Returns:
             int: The checksum value (0-255).
         """
@@ -61,8 +60,13 @@ class Packet:
         Returns:
             bytes: The byte string representation of the packet.
         """
-        return self.HEADER + self.packet_type.value + self.length.to_bytes(1, 'big') + self.payload + self.checksum.to_bytes(1, byteorder='big')
-
+        return (
+            self.HEADER
+            + self.packet_type.value
+            + self.length.to_bytes(1, "big")
+            + self.payload
+            + self.checksum.to_bytes(1, byteorder="big")
+        )
 
     def to_str(self) -> str:
         """
@@ -71,5 +75,5 @@ class Packet:
         Returns:
             str: The string representation of the packet.
         """
-        hex_bytes = [f'0x{byte:02X}' for byte in self.to_bytes()]
-        return ' '.join(hex_bytes)
+        hex_bytes = [f"0x{byte:02X}" for byte in self.to_bytes()]
+        return " ".join(hex_bytes)
