@@ -38,7 +38,7 @@ Then open `http://localhost:8080` in your browser.
 
 4. **Power Control**: Use the On/Off buttons to turn the curtain lights on or off.
 
-5. **Animated Presets**: Select a preset number (1-109), adjust the brightness slider (0-255), and optionally adjust the animation speed slider (0-10, default 10). Click "Apply Preset" or simply change the sliders to apply immediately when connected.
+5. **Animated Presets**: Select a preset number (1-109) and adjust the brightness slider (0-255). Click "Apply Preset" or simply change the sliders to apply immediately when connected.
 
 6. **Pause Animation**: Click "Pause Animation" to pause the current effect.
 
