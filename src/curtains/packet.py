@@ -6,7 +6,7 @@ class PacketType(Enum):
     Enum class representing different types of packets.
     """
     POWER = b"\x02"
-    PRESET = b"\03"
+    CONTROL = b"\x03"
 
 class Packet:
     HEADER = b"\xaa"
