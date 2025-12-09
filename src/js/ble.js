@@ -52,8 +52,12 @@ export default class Bluetooth {
   /**
    * Build PRESET command packet
    */
-  static buildPresetPacket(preset, brightness, speed = 10) {
-    return Bluetooth.buildPacket(Bluetooth.PACKET_TYPE_PRESET, [0x02, preset, brightness, speed]);
+  static buildPresetPacket(preset, brightness, speed) {
+    // Only include speed byte if explicitly provided
+    const payload = speed !== undefined
+      ? [0x02, preset, brightness, speed]
+      : [0x02, preset, brightness];
+    return Bluetooth.buildPacket(Bluetooth.PACKET_TYPE_PRESET, payload);
   }
 
   /**
@@ -75,11 +79,11 @@ export default class Bluetooth {
       const services = [
         "49535343-fe7d-4ae5-8fa9-9fafd205e455",  // Custom service UUID
         "0000180a-0000-1000-8000-00805f9b34fb",  // Device Information Service
-        "0000180f-0000-1000-8000-00805f9b34fb",  // Battery Service  
+        "0000180f-0000-1000-8000-00805f9b34fb",  // Battery Service
         "generic_access",                         // Generic Access
         "generic_attribute"                       // Generic Attribute
       ];
-      
+
       if (deviceName && deviceName.trim() !== "") {
         options = {
           acceptAllDevices: false,
@@ -95,10 +99,10 @@ export default class Bluetooth {
       }
 
       this.device = await navigator.bluetooth.requestDevice(options);
-      
+
       // Connect to GATT server
       this.server = await this.device.gatt.connect();
-      
+
       return true;
     } catch (error) {
       console.error("Connection failed:", error);
@@ -121,7 +125,7 @@ export default class Bluetooth {
       try {
         // Get all primary services
         const services = await this.server.getPrimaryServices();
-        
+
         // Find the characteristic across all services
         for (const service of services) {
           try {
@@ -141,7 +145,7 @@ export default class Bluetooth {
       } catch (error) {
         console.error("Error getting services:", error);
       }
-      
+
       throw new Error(`Characteristic ${this.characteristicUuid} not found. The device may not support this characteristic, or you may need to add its service UUID to the optionalServices list in the connect() method.`);
     }
     return this.characteristic;
@@ -154,7 +158,7 @@ export default class Bluetooth {
     if (!this.server || !this.server.connected) {
       throw new Error("Not connected to device");
     }
-    
+
     if (!this.characteristicUuid) {
       throw new Error("Characteristic UUID not set");
     }
@@ -182,7 +186,7 @@ export default class Bluetooth {
   /**
    * Set preset animation
    */
-  async setPreset(preset, brightness, speed = 10) {
+  async setPreset(preset, brightness, speed) {
     const packet = Bluetooth.buildPresetPacket(preset, brightness, speed);
     await this.writePacket(packet);
   }

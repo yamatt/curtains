@@ -38,7 +38,7 @@ Then open `http://localhost:8080` in your browser.
 
 4. **Power Control**: Use the On/Off buttons to turn the curtain lights on or off.
 
-5. **Animated Presets**: Select a preset number (1-109), adjust the brightness slider (0-255), and optionally adjust the animation speed slider (0-255, default 10). Click "Apply Preset" or simply change the sliders to apply immediately when connected.
+5. **Animated Presets**: Select a preset number (1-109), adjust the brightness slider (0-255), and optionally adjust the animation speed slider (0-10, default 10). Click "Apply Preset" or simply change the sliders to apply immediately when connected.
 
 6. **Pause Animation**: Click "Pause Animation" to pause the current effect.
 
@@ -99,4 +99,4 @@ uv run curtains off FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3
 uv run curtains preset FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 2 --brightness 255 --speed 10
 ```
 
-Where `2` is the preset animation type from 1 to 109. And `--brightness` is brightness level from 0 (low brightness, but not off) to 255 (high brightness). The optional `--speed` parameter controls animation speed from 0 (slow) to 255 (fast), with a default of 10.
+Where `2` is the preset animation type from 1 to 109. And `--brightness` is brightness level from 0 (low brightness, but not off) to 255 (high brightness). The optional `--speed` parameter controls animation speed from 0 (slow) to 10 (fast), with a default of 10.

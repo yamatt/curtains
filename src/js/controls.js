@@ -10,14 +10,14 @@ export default class Controls {
   init() {
     // Create status display element
     this.createStatusDisplay();
-    
+
     // Handle form submission
     this.el.addEventListener("submit", async (event) => {
       event.preventDefault();
-      
+
       const formData = new FormData(event.target);
       const submitter = event.submitter;
-      
+
       try {
         if (submitter.name === "connect") {
           await this.handleConnect(formData);
@@ -35,7 +35,7 @@ export default class Controls {
         console.error(error);
       }
     });
-    
+
     // Handle preset input change - auto-apply when changed
     this.el.preset.addEventListener("change", async (event) => {
       if (this.bluetooth.isConnected()) {
@@ -94,7 +94,7 @@ export default class Controls {
 
   showStatus(message, type = "info") {
     this.statusEl.textContent = message;
-    
+
     // Set color based on type
     const colors = {
       info: "#0066cc",
@@ -102,25 +102,25 @@ export default class Controls {
       error: "#cc0000",
       warning: "#ff8800"
     };
-    
+
     this.statusEl.style.color = colors[type] || colors.info;
   }
 
   async handleConnect(formData) {
     const deviceAddress = formData.get("device_address");
     const characteristicUuid = formData.get("characteristic_uuid");
-    
+
     if (!characteristicUuid) {
       this.showStatus("Please enter characteristic UUID", "error");
       return;
     }
 
     this.showStatus("Connecting to device...", "info");
-    
+
     // Pass the device address (empty string if not provided to show all devices)
     await this.bluetooth.connect(deviceAddress || "");
     this.bluetooth.setCharacteristic(characteristicUuid);
-    
+
     this.showStatus("Connected successfully!", "success");
   }
 
@@ -142,7 +142,7 @@ export default class Controls {
     }
 
     this.showStatus(`Turning ${value.toLowerCase()}...`, "info");
-    
+
     if (value === "On") {
       await this.bluetooth.turnOn();
       this.showStatus("Turned on successfully", "success");
@@ -172,19 +172,19 @@ export default class Controls {
     const preset = parseInt(formData.get("preset"), 10);
     const brightness = parseInt(formData.get("brightness") || "255", 10);
     const speed = parseInt(formData.get("speed") || "10", 10);
-    
+
     if (isNaN(preset) || preset < 1 || preset > 109) {
       this.showStatus("Preset must be between 1 and 109", "error");
       return;
     }
-    
+
     if (isNaN(brightness) || brightness < 0 || brightness > 255) {
       this.showStatus("Brightness must be between 0 and 255", "error");
       return;
     }
-    
-    if (isNaN(speed) || speed < 0 || speed > 255) {
-      this.showStatus("Speed must be between 0 and 255", "error");
+
+    if (isNaN(speed) || speed < 0 || speed > 10) {
+      this.showStatus("Speed must be between 0 and 10", "error");
       return;
     }
 
@@ -199,16 +199,16 @@ export default class Controls {
     const brightness = brightnessInput ? parseInt(brightnessInput.value, 10) : 255;
     const speedInput = this.el.querySelector('[name="speed"]');
     const speed = speedInput ? parseInt(speedInput.value, 10) : 10;
-    
+
     if (isNaN(preset) || preset < 1 || preset > 109) {
       return;
     }
-    
+
     if (isNaN(brightness) || brightness < 0 || brightness > 255) {
       return;
     }
-    
-    if (isNaN(speed) || speed < 0 || speed > 255) {
+
+    if (isNaN(speed) || speed < 0 || speed > 10) {
       return;
     }
 

@@ -157,14 +157,14 @@
           <div class="slider-label">
             <span>Slow (0)</span>
             <span id="speed-value">10</span>
-            <span>Fast (255)</span>
+            <span>Fast (10)</span>
           </div>
           <input
             type="range"
             id="speed"
             name="speed"
             min="0"
-            max="255"
+            max="10"
             value="10"
           />
         </div>
@@ -179,7 +179,7 @@
       document.getElementById("brightness").addEventListener("input", (e) => {
         document.getElementById("brightness-value").textContent = e.target.value;
       });
-      
+
       // Update speed value display
       document.getElementById("speed").addEventListener("input", (e) => {
         document.getElementById("speed-value").textContent = e.target.value;
