@@ -29,6 +29,8 @@ export default class Controls {
           await this.handlePause();
         } else if (submitter.name === "preset_apply") {
           await this.handlePreset(formData);
+        } else if (submitter.name === "color_apply") {
+          await this.handleColor(formData);
         }
       } catch (error) {
         this.showStatus(`Error: ${error.message}`, "error");
@@ -55,6 +57,36 @@ export default class Controls {
         if (this.bluetooth.isConnected()) {
           try {
             await this.handlePresetFromInput();
+          } catch (error) {
+            this.showStatus(`Error: ${error.message}`, "error");
+            console.error(error);
+          }
+        }
+      });
+    }
+
+    // Handle color input change - auto-apply when changed
+    const colorInput = this.el.querySelector('[name="color"]');
+    if (colorInput) {
+      colorInput.addEventListener("change", async (event) => {
+        if (this.bluetooth.isConnected()) {
+          try {
+            await this.handleColorFromInput();
+          } catch (error) {
+            this.showStatus(`Error: ${error.message}`, "error");
+            console.error(error);
+          }
+        }
+      });
+    }
+
+    // Handle color brightness input change - auto-apply when changed
+    const colorBrightnessInput = this.el.querySelector('[name="color-brightness"]');
+    if (colorBrightnessInput) {
+      colorBrightnessInput.addEventListener("change", async (event) => {
+        if (this.bluetooth.isConnected()) {
+          try {
+            await this.handleColorFromInput();
           } catch (error) {
             this.showStatus(`Error: ${error.message}`, "error");
             console.error(error);
@@ -189,4 +221,66 @@ export default class Controls {
     await this.bluetooth.setPreset(preset, brightness);
     this.showStatus(`Preset ${preset} applied successfully`, "success");
   }
-}
+
+  hexToHsv(hex) {
+    // Convert hex color to HSV
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+
+    let h = 0;
+    if (delta !== 0) {
+      if (max === r) h = ((g - b) / delta + (g < b ? 6 : 0)) / 6;
+      else if (max === g) h = ((b - r) / delta + 2) / 6;
+      else h = ((r - g) / delta + 4) / 6;
+    }
+
+    const s = max === 0 ? 0 : delta / max;
+    const v = max;
+
+    return {
+      h: Math.round(h * 360),
+      s: Math.round(s * 1000),
+      v: Math.round(v * 1000)
+    };
+  }
+
+  async handleColor(formData) {
+    if (!this.bluetooth.isConnected()) {
+      this.showStatus("Please connect to device first", "error");
+      return;
+    }
+
+    const colorHex = formData.get("color") || "#FF0000";
+    const colorBrightness = parseInt(formData.get("color-brightness") || "1000", 10);
+
+    if (colorBrightness < 0 || colorBrightness > 1000) {
+      this.showStatus("Color brightness must be between 0 and 1000", "error");
+      return;
+    }
+
+    const hsv = this.hexToHsv(colorHex);
+    this.showStatus(`Setting color ${colorHex} with brightness ${colorBrightness}...`, "info");
+    await this.bluetooth.setSolidColor(hsv.h, hsv.s, colorBrightness);
+    this.showStatus(`Color applied successfully`, "success");
+  }
+
+  async handleColorFromInput() {
+    const colorInput = this.el.querySelector('[name="color"]');
+    const colorHex = colorInput ? colorInput.value : "#FF0000";
+    const colorBrightnessInput = this.el.querySelector('[name="color-brightness"]');
+    const colorBrightness = colorBrightnessInput ? parseInt(colorBrightnessInput.value, 10) : 1000;
+
+    if (colorBrightness < 0 || colorBrightness > 1000) {
+      return;
+    }
+
+    const hsv = this.hexToHsv(colorHex);
+    this.showStatus(`Setting color ${colorHex} with brightness ${colorBrightness}...`, "info");
+    await this.bluetooth.setSolidColor(hsv.h, hsv.s, colorBrightness);
+    this.showStatus(`Color applied successfully`, "success");
+  }

@@ -73,6 +73,21 @@
         width: 100%;
         margin: 10px 0;
       }
+      input[type="color"] {
+        width: 80px;
+        height: 40px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .color-controls {
+        display: flex;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      .color-input-group {
+        flex: 1;
+      }
       .preset-controls {
         display: flex;
         gap: 10px;
@@ -157,11 +172,49 @@
           <input type="submit" name="pause" value="Pause Animation" />
         </div>
       </fieldset>
+      <fieldset>
+        <legend>🎨 Solid Color</legend>
+        <div class="color-controls">
+          <div class="color-input-group">
+            <label for="color">Color:</label>
+            <input
+              type="color"
+              id="color"
+              name="color"
+              value="#FF0000"
+            />
+          </div>
+          <div class="color-input-group">
+            <label for="color-brightness">Brightness:</label>
+            <div class="slider-label">
+              <span>Low (0)</span>
+              <span id="color-brightness-value">1000</span>
+              <span>High (1000)</span>
+            </div>
+            <input
+              type="range"
+              id="color-brightness"
+              name="color-brightness"
+              min="0"
+              max="1000"
+              value="1000"
+            />
+          </div>
+        </div>
+        <div style="margin-top: 10px">
+          <input type="submit" name="color_apply" value="Apply Color" />
+        </div>
+      </fieldset>
     </form>
     <script>
       // Update brightness value display
       document.getElementById("brightness").addEventListener("input", (e) => {
         document.getElementById("brightness-value").textContent = e.target.value;
+      });
+
+      // Update color brightness value display
+      document.getElementById("color-brightness").addEventListener("input", (e) => {
+        document.getElementById("color-brightness-value").textContent = e.target.value;
       });
     </script>
   </body>

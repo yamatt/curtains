@@ -200,6 +200,54 @@ export default class Bluetooth {
   }
 
   /**
+   * Set solid color
+   * @param {number} hue - Hue (0-360)
+   * @param {number} saturation - Saturation (0-1000)
+   * @param {number} brightness - Brightness/Value (0-1000)
+   */
+  async setSolidColor(hue, saturation, brightness) {
+    // Convert hue to 2 bytes (big-endian)
+    const hueBytes = hue.toString(16).padStart(4, '0');
+    const satBytes = saturation.toString(16).padStart(4, '0');
+    const brightBytes = brightness.toString(16).padStart(4, '0');
+
+    const payload = new Uint8Array([
+      0x01, // Set Color command
+      parseInt(hueBytes.slice(0, 2), 16),
+      parseInt(hueBytes.slice(2, 4), 16),
+      parseInt(satBytes.slice(0, 2), 16),
+      parseInt(satBytes.slice(2, 4), 16),
+      parseInt(brightBytes.slice(0, 2), 16),
+      parseInt(brightBytes.slice(2, 4), 16)
+    ]);
+
+    const packet = Bluetooth.buildColorPacket(payload);
+    await this.writePacket(packet);
+  }
+
+  /**
+   * Build color packet
+   */
+  static buildColorPacket(payload) {
+    return Bluetooth.buildPacket(0x03, payload);
+  }
+
+  /**
+   * Build a packet with header, type, length, payload, checksum
+   */
+  static buildPacket(packetType, payload) {
+    const length = payload.length;
+    const checksum = Bluetooth.calculateChecksum(payload);
+    return new Uint8Array([
+      Bluetooth.HEADER,
+      packetType,
+      length,
+      ...payload,
+      checksum
+    ]);
+  }
+
+  /**
    * Disconnect from device
    */
   disconnect() {
