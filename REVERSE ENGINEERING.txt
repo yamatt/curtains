@@ -1,0 +1,20 @@
+# Streaming Bluetooth traffic from Android device to laptop
+
+You need to enable Developer Mode on the Android device and add adb on your local device.
+
+Then run
+
+```
+adb shell settings put secure bluetooth_hci_snoop_enabled 1
+```
+
+The android device will ask to approve the connection. You might have to run this command twice.
+
+Then in Wireshark look for  _Logcat Main_ interface.
+
+Then filter on `writeCharacteristic`:
+
+```
+logcat_text.log contains "writeCharacteristic"
+```
+
