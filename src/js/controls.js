@@ -284,3 +284,4 @@ export default class Controls {
     await this.bluetooth.setSolidColor(hsv.h, hsv.s, colorBrightness);
     this.showStatus(`Color applied successfully`, "success");
   }
+}
