@@ -69,8 +69,6 @@ First byte of the payload is preset type.
 
 #### Examples
 
-I'm assuming RGB is being sent
-
 *Pure red*: 0xAA030701                        000003E803E8 8B
 *pure red. approx 50% brightness*: 0xAA030701 000003E80190 31
 *Pure green*: 0xAA030701                      007703E803E8 02
