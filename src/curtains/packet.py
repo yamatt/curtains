@@ -15,18 +15,16 @@ class Packet:
     FOOTER = b"\x64"
 
     @classmethod
-    def from_args(cls, args):
-        return cls(getattr(PacketType, args.type), bytes.fromhex(args.payload))
+    def from_payload(cls, payload: str):
+        return cls(bytes.fromhex(payload))
 
-    def __init__(self, packet_type: PacketType, payload: bytes):
+    def __init__(self, payload: bytes):
         """
         Initialize a Packet object.
 
         Parameters:
-            packet_type (PacketTypes): The type of packet.
             data (bytes): The data payload of the packet.
         """
-        self.packet_type = packet_type
         self.payload = payload
 
     @property
@@ -52,6 +50,43 @@ class Packet:
             int: The length of the packet.
         """
         return len(self.payload)
+
+    def to_bytes(self) -> bytes:
+        """
+        Convert the packet to a byte string.
+
+        Returns:
+            bytes: The byte string representation of the packet.
+        """
+        return self.HEADER + self.payload + self.checksum.to_bytes(1, byteorder="big")
+
+    def to_str(self) -> str:
+        """
+        Convert the packet to a string representation.
+
+        Returns:
+            str: The string representation of the packet.
+        """
+        hex_bytes = [f"0x{byte:02X}" for byte in self.to_bytes()]
+        return " ".join(hex_bytes)
+
+
+class TypedPacket(Packet):
+
+    @classmethod
+    def from_args(cls, args):
+        return cls(getattr(PacketType, args.type), bytes.fromhex(args.payload))
+
+    def __init__(self, packet_type: PacketType, payload: bytes):
+        """
+        Initialize a TypedPacket object.
+
+        Parameters:
+            packet_type (PacketTypes): The type of packet.
+            data (bytes): The data payload of the packet.
+        """
+        self.packet_type = packet_type
+        super().__init__(payload)
 
     def to_bytes(self) -> bytes:
         """

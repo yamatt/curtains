@@ -56,6 +56,17 @@ First byte of the payload is preset type.
 
 #### Solid colour
 
+| Offset | Length | Value  | Description                                     |
+| ------ | ------ | ------ | ----------------------------------------------- |
+| 0      | 1      | 0xAA   | Header                                          |
+| 1      | 1      | 0x03   | Msg Type (Color)                                |
+| 2      | 1      | 0x07   | Packet Length (Remaining bytes: 1 cmd + 6 data) |
+| 3      | 1      | 0x01   | Sub-Command (Likely "Set Color")                |
+| 4      | 2      | 0xHHHH | Hue (0-360 degrees)                             |
+| 6      | 2      | 0xSSSS | Saturation (0-1000)                             |
+| 8      | 2      | 0xVVVV | Value/Brightness (0-1000)                       |
+| 10     | 1      | 0xCC   | Checksum                                        |
+
 #### Examples
 
 I'm assuming RGB is being sent

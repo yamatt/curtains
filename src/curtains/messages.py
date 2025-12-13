@@ -1,22 +1,22 @@
-from .packet import Packet, PacketType
+from .packet import TypedPacket, PacketType
 
 
-class On(Packet):
+class On(TypedPacket):
     def __init__(self):
         super().__init__(PacketType.POWER, b"\x01")
 
 
-class Off(Packet):
+class Off(TypedPacket):
     def __init__(self):
         super().__init__(PacketType.POWER, b"\x00")
 
 
-class Pause(Packet):
+class Pause(TypedPacket):
     def __init__(self):
         super().__init__(PacketType.PRESET, b"\x02\x00")
 
 
-class Preset(Packet):
+class Preset(TypedPacket):
     PRESET_ANIMATION_MODE = b"\x02"
 
     @classmethod

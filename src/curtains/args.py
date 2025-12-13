@@ -3,11 +3,14 @@ from argparse import Namespace, ArgumentParser
 from .ble import scan, connect, read, update, listen, on, off, write, preset, pause
 from .packet import PacketType
 
+
 def get_args(args: list = None) -> Namespace:
     parser = ArgumentParser(
         description="Curtains: A CLI for managing LED curtains over BLE."
     )
-    subparsers = parser.add_subparsers(dest="command", help="Available commands.", required=True)
+    subparsers = parser.add_subparsers(
+        dest="command", help="Available commands.", required=True
+    )
 
     scanner_parser = subparsers.add_parser("scan", help="List BLE devices.")
     scanner_parser.set_defaults(func=scan)
@@ -24,6 +27,7 @@ def get_args(args: list = None) -> Namespace:
     update_parser = subparsers.add_parser("update", help="Write value to Character.")
     update_parser.add_argument("device_address")
     update_parser.add_argument("char_uuid", help="Characteristic UUID")
+    update_parser.add_argument("payload", help="Characteristic UUID")
     update_parser.set_defaults(func=update)
 
     listen_parser = subparsers.add_parser("listen", help="Listen to notifications.")
@@ -44,7 +48,6 @@ def get_args(args: list = None) -> Namespace:
     listen_parser = subparsers.add_parser("write", help="Write data to characteristic.")
     listen_parser.add_argument("device_address")
     listen_parser.add_argument("char_uuid", help="Characteristic UUID")
-    listen_parser.add_argument("type", choices=PacketType.__members__.keys(), type=str.upper)
     listen_parser.add_argument("payload", help="Payload as hex. E.g.: 0201030d")
     listen_parser.set_defaults(func=write)
 
@@ -52,14 +55,27 @@ def get_args(args: list = None) -> Namespace:
     listen_parser.add_argument("device_address")
     listen_parser.add_argument("char_uuid", help="Characteristic UUID")
     listen_parser.add_argument("preset", help="Preset from 1 to 109", type=int)
-    listen_parser.add_argument("-b", "--brightness", help="Brightness level from 0 to 255", required=False, default=255, type=int)
-    listen_parser.add_argument("-s", "--speed", help="Animation speed from 0 to 255 (default: 10)", required=False, default=10, type=int)
+    listen_parser.add_argument(
+        "-b",
+        "--brightness",
+        help="Brightness level from 0 to 255",
+        required=False,
+        default=255,
+        type=int,
+    )
+    listen_parser.add_argument(
+        "-s",
+        "--speed",
+        help="Animation speed from 0 to 255 (default: 10)",
+        required=False,
+        default=10,
+        type=int,
+    )
     listen_parser.set_defaults(func=preset)
 
     listen_parser = subparsers.add_parser("pause", help="Pause preset animation.")
     listen_parser.add_argument("device_address")
     listen_parser.add_argument("char_uuid", help="Characteristic UUID")
     listen_parser.set_defaults(func=pause)
-
 
     return parser.parse_args(args)

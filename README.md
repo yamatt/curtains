@@ -93,6 +93,20 @@ Off:
 uv run curtains off FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3
 ```
 
+### Change Colour
+
+**Red**:
+
+```sh
+uv run curtains write FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 030701000003E803E8
+```
+
+**White**:
+
+```sh
+uv run curtains write FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 0307010000000003E8
+```
+
 ### Change preset
 
 ```bash
