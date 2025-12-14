@@ -65,10 +65,10 @@ export default class Controls {
       });
     }
 
-    // Handle color input change - auto-apply when changed
-    const colorInput = this.el.querySelector('[name="color"]');
-    if (colorInput) {
-      colorInput.addEventListener("change", async (event) => {
+    // Handle hue input change - auto-apply when changed
+    const hueInput = this.el.querySelector('[name="hue"]');
+    if (hueInput) {
+      hueInput.addEventListener("change", async (event) => {
         if (this.bluetooth.isConnected()) {
           try {
             await this.handleColorFromInput();
@@ -255,33 +255,40 @@ export default class Controls {
       return;
     }
 
-    const colorHex = formData.get("color") || "#FF0000";
+    const hue = parseInt(formData.get("hue") || "0", 10);
     const colorBrightness = parseInt(formData.get("color-brightness") || "1000", 10);
+
+    if (hue < 0 || hue > 360) {
+      this.showStatus("Hue must be between 0 and 360", "error");
+      return;
+    }
 
     if (colorBrightness < 0 || colorBrightness > 1000) {
       this.showStatus("Color brightness must be between 0 and 1000", "error");
       return;
     }
 
-    const hsv = this.hexToHsv(colorHex);
-    this.showStatus(`Setting color ${colorHex} with brightness ${colorBrightness}...`, "info");
-    await this.bluetooth.setSolidColor(hsv.h, hsv.s, colorBrightness);
+    this.showStatus(`Setting hue ${hue}° with brightness ${colorBrightness}...`, "info");
+    await this.bluetooth.setSolidColor(hue, 1000, colorBrightness);
     this.showStatus(`Color applied successfully`, "success");
   }
 
   async handleColorFromInput() {
-    const colorInput = this.el.querySelector('[name="color"]');
-    const colorHex = colorInput ? colorInput.value : "#FF0000";
+    const hueInput = this.el.querySelector('[name="hue"]');
+    const hue = hueInput ? parseInt(hueInput.value, 10) : 0;
     const colorBrightnessInput = this.el.querySelector('[name="color-brightness"]');
     const colorBrightness = colorBrightnessInput ? parseInt(colorBrightnessInput.value, 10) : 1000;
+
+    if (hue < 0 || hue > 360) {
+      return;
+    }
 
     if (colorBrightness < 0 || colorBrightness > 1000) {
       return;
     }
 
-    const hsv = this.hexToHsv(colorHex);
-    this.showStatus(`Setting color ${colorHex} with brightness ${colorBrightness}...`, "info");
-    await this.bluetooth.setSolidColor(hsv.h, hsv.s, colorBrightness);
+    this.showStatus(`Setting hue ${hue}° with brightness ${colorBrightness}...`, "info");
+    await this.bluetooth.setSolidColor(hue, 1000, colorBrightness);
     this.showStatus(`Color applied successfully`, "success");
   }
 }
