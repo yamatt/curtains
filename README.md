@@ -114,3 +114,17 @@ uv run curtains preset FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 2 
 ```
 
 Where `2` is the preset animation type from 1 to 109. And `--brightness` is brightness level from 0 (low brightness, but not off) to 255 (high brightness). The optional `--speed` parameter controls animation speed from 0 (slow) to 10 (fast), with a default of 10.
+
+### Set single LED colour
+
+Set single LED number 100, to red
+
+```sh
+uv run curtains write FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 D103006400
+```
+
+Clear LEDs:
+
+```sh
+uv run curtains write FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 D00400646403
+```
