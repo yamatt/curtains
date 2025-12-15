@@ -38,8 +38,9 @@ class Packet:
         Returns:
             int: The checksum value (0-255).
         """
-        checksum = sum(self.payload) % 256
-        return checksum
+        # total = sum(self.payload) # old method
+        total = sum(self.HEADER) + sum(self.payload)
+        return total % 256
 
     @property
     def length(self) -> int:
