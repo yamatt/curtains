@@ -11,13 +11,6 @@ on:
       - "src/js/*"
       - "webpack.config.js"
       - "package.json"
-  pull_request:
-    paths:
-      - ".github/workflows/page.yaml"
-      - "src/html/*"
-      - "src/js/*"
-      - "webpack.config.js"
-      - "package.json"
 
 permissions:
   contents: read
