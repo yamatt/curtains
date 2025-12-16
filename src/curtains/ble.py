@@ -4,6 +4,7 @@ import base64
 
 from bleak import BleakClient, BleakScanner
 
+from .logger import log
 from .packet import Packet, TypedPacket
 from .messages import On, Off, Preset, Pause
 
@@ -68,27 +69,27 @@ async def listen_service(address: str, char_uuid: str):
 async def discover_devices():
     devices = await BleakScanner.discover()
     for device in devices:
-        print(f"{device.address}: {device.name}")
+        log.info("DISCOVER", address=device.address, name=device.name)
 
 
 async def read_services(address: str, char_uuid: str):
     async with BleakClient(address) as client:
         value = await client.read_gatt_char(char_uuid)
-        print("Read value:", value)
+        log.info("READ SERVICE", value=value)
 
 
 async def list_services(address: str):
     async with BleakClient(address) as client:
         # Example: Read available services
         for service in client.services:
-            print(f"Service: {service.uuid}")
+            log.info("SERVICE", uuid=service.uuid)
             for characteristic in service.characteristics:
-                print(f"\tCharacteristic: {characteristic.uuid}")
+                log.info("CHARACTERISTIC", uuid=characteristic.uuid)
                 for property in characteristic.properties:
-                    print(f"\t\tProperty: {property}")
+                    log.info("PROPERTY", property=property)
 
 
 async def write_services(address: str, char_uuid: str, packet: Packet):
     async with BleakClient(address) as client:
-        # print("Write value:", packet.to_str())
+        log.debug("WRITING PACKET", packet_s=packet.to_str())
         await client.write_gatt_char(char_uuid, packet.to_bytes())
