@@ -47,7 +47,7 @@ jobs:
         uses: actions/deploy-pages@v4
       - name: Upload build artifact (PR)
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: dist
           path: dist/
