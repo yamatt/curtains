@@ -1,25 +1,11 @@
 from enum import Enum
-from PIL import Image  # Requires: pip install pillow
-import math
-
-
-class PacketType(Enum):
-    """
-    Enum class representing different types of packets.
-    """
-
-    POWER = b"\x02"
-    PRESET = b"\x03"
-    PIXEL_CLEAR = b"\xd0"
-    PIXEL_UPDATE = b"\xd1"
 
 
 class Packet:
     HEADER = b"\xaa"
-    FOOTER = b"\x64"
 
     @classmethod
-    def from_payload(cls, payload: str):
+    def payload_from_string(cls, payload: str):
         return cls(bytes.fromhex(payload))
 
     def __init__(self, payload: bytes):
@@ -78,19 +64,30 @@ class Packet:
 
 class TypedPacket(Packet):
 
+    PACKET_TYPE = None
+
+    class Types(Enum):
+        """
+        Enum class representing different types of packets.
+        """
+
+        POWER = b"\x02"
+        PRESET = b"\x03"
+        PIXEL_CLEAR = b"\xd0"
+        PIXEL_UPDATE = b"\xd1"
+        PIXEL_BULK_UPDATE = b"\xda"
+
     @classmethod
     def from_args(cls, args):
-        return cls(getattr(PacketType, args.type), bytes.fromhex(args.payload))
+        return cls(bytes.fromhex(args.payload))
 
-    def __init__(self, packet_type: PacketType, payload: bytes):
+    def __init__(self, payload: bytes):
         """
         Initialize a TypedPacket object.
 
         Parameters:
-            packet_type (PacketTypes): The type of packet.
-            data (bytes): The data payload of the packet.
+            payload (bytes): The data payload of the packet.
         """
-        self.packet_type = packet_type
         super().__init__(payload)
 
     def to_bytes(self) -> bytes:
@@ -102,7 +99,7 @@ class TypedPacket(Packet):
         """
         return (
             self.HEADER
-            + self.packet_type.value
+            + self.PACKET_TYPE.value
             + self.length.to_bytes(1, "big")
             + self.payload
             + self.checksum.to_bytes(1, byteorder="big")
@@ -119,48 +116,21 @@ class TypedPacket(Packet):
         return " ".join(hex_bytes)
 
 
-class PixelBase(Packet):
-    @property
-    def packet_type(self) -> PacketType:
-        return PacketType.PIXEL_CLEAR
+class PowerPacketBase(TypedPacket):
+    PACKET_TYPE = TypedPacket.Types.POWER
 
 
-class PixelClearPacket(PixelBase):
+class PixelCommandBase(TypedPacket):
+    PACKET_TYPE = TypedPacket.Types.PIXEL_CLEAR
+
+    def __init__(self):
+        super().__init__(self.COMMAND)
+
+
+class PixelClearPacket(PixelCommandBase):
     @property
     def payload(self) -> bytes:
         return b"\x00\x64\x64\x03"
-
-
-class PixelUpdatePacket(Packet):
-    """
-    Subclass to handle the specific checksum logic and command structure
-    of pixel update packets.
-    """
-
-    def __init__(self, x: int, y: int, color: bytes) -> "PixelUpdatePacket":
-        """
-        Creates a packet to update a single pixel.
-
-        Parameters:
-            x: The coordinate x (0-19).
-            y: The coordinate y (0-19).
-            color: The color value byte.
-        """
-        self.x = x
-        self.y = y
-        self.color = color
-
-    @property
-    def packet_type(self) -> bytes:
-        return PacketType.PIXEL_UPDATE
-
-    @property
-    def index(self) -> int:
-        return self.y * 20 + self.x
-
-    @property
-    def payload(self) -> bytes:
-        return self.index.to_bytes(2, "big") + self.color.to_bytes(1, "big")
 
 
 class ImagePacket(Packet):

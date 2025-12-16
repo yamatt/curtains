@@ -6,7 +6,6 @@ from bleak import BleakClient, BleakScanner
 
 from .logger import log
 from .packet import Packet, TypedPacket
-from .messages import On, Off, Preset, Pause
 
 
 def scan(args):
@@ -31,30 +30,14 @@ def listen(args):
     asyncio.run(listen_service(args.device_address, args.char_uuid))
 
 
-def on(args):
-    asyncio.run(write_services(args.device_address, args.char_uuid, On()))
-
-
-def off(args):
-    asyncio.run(write_services(args.device_address, args.char_uuid, Off()))
-
-
-def write(args):
+def send(device_address, char_uuid, packet):
     asyncio.run(
         write_services(
-            args.device_address, args.char_uuid, Packet.from_payload(args.payload)
+            device_address,
+            char_uuid,
+            packet,
         )
     )
-
-
-def preset(args):
-    asyncio.run(
-        write_services(args.device_address, args.char_uuid, Preset.from_args(args))
-    )
-
-
-def pause(args):
-    asyncio.run(write_services(args.device_address, args.char_uuid, Pause()))
 
 
 async def listen_service(address: str, char_uuid: str):

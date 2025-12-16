@@ -55,6 +55,14 @@ No server-side code is needed - everything runs entirely in your browser!
 
 ## Python CLI Usage
 
+### Debug
+
+You can turn on debugging messages by setting the environment variable `LOG_LEVEL` to `DEBUG`.
+
+```sh
+LOG_LEVEL=DEBUG uv run curtains FF:44:10:22:75:68 --char-uuid 49535343-8841-43f4-a8d4-ecbe34729bb3 write 030701000003E803E8
+```
+
 ### Setup
 
 ```bash
@@ -73,10 +81,10 @@ Mine is `FF:44:10:22:75:68`.
 
 ### List services
 
-This lists UUIDs, Characteristics and Properties of specific device.
+This lists UUIDs, Characteristics and Properties of a specific device.
 
 ```bash
-uv run curtains connect FF:44:10:22:75:68
+uv run curtains FF:44:10:22:75:68 connect
 ```
 
 ### Turn curtains on and off
@@ -84,47 +92,63 @@ uv run curtains connect FF:44:10:22:75:68
 On:
 
 ```bash
-uv run curtains on FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3
+uv run curtains FF:44:10:22:75:68 on
 ```
 
 Off:
 
 ```bash
-uv run curtains off FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3
+uv run curtains FF:44:10:22:75:68 off
 ```
 
 ### Change Colour
 
+Use the `write` command to send raw payloads. Device address goes first; `--char-uuid` may be omitted (defaults to the common control UUID).
+
 **Red**:
 
 ```sh
-uv run curtains write FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 030701000003E803E8
+uv run curtains FF:44:10:22:75:68 write 030701000003E803E8
 ```
 
 **White**:
 
 ```sh
-uv run curtains write FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 0307010000000003E8
+uv run curtains FF:44:10:22:75:68 write 0307010000000003E8
 ```
 
 ### Change preset
 
 ```bash
-uv run curtains preset FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 2 --brightness 255 --speed 10
+uv run curtains FF:44:10:22:75:68 preset 2 --brightness 255 --speed 10
 ```
 
-Where `2` is the preset animation type from 1 to 109. And `--brightness` is brightness level from 0 (low brightness, but not off) to 255 (high brightness). The optional `--speed` parameter controls animation speed from 0 (slow) to 10 (fast), with a default of 10.
+Where `2` is the preset animation type from 1 to 109. `--brightness` is brightness level from 0 (low brightness, but not off) to 255 (high brightness). The optional `--speed` parameter controls animation speed from 0 (slow) to 10 (fast), with a default of 10.
 
-### Set single LED colour
+### Pixel operations
 
-Set single LED number 100, to red
+Use the `pixel` command with subcommands: `single`, `clear`, `fill`, `draw`.
+
+Set single LED at coordinates (x,y) to a named color:
 
 ```sh
-uv run curtains write FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 D103006400
+uv run curtains FF:44:10:22:75:68 pixel single 10 10 red
 ```
 
-Clear LEDs:
+Clear LEDs (controller-dependent):
 
 ```sh
-uv run curtains write FF:44:10:22:75:68 49535343-8841-43f4-a8d4-ecbe34729bb3 D00400646403
+uv run curtains FF:44:10:22:75:68 pixel clear
+```
+
+Fill starting from an offset:
+
+```sh
+uv run curtains FF:44:10:22:75:68 pixel fill blue --offset 0
+```
+
+Enter drawing mode:
+
+```sh
+uv run curtains FF:44:10:22:75:68 pixel draw
 ```
