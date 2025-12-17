@@ -128,8 +128,8 @@ def image(args):
     image = Image.open(args.image_path).convert("HSL")
 
     # check image size
-    if image.size[0] > 20 or image.size[1] > 20:
-        raise ValueError("Image must be maximum 20x20 pixels")
+    if image.size != (20, 20):
+        raise ValueError("Image must be 20x20 pixels")
 
     pixel_color = []
 
