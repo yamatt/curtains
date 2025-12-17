@@ -6,6 +6,7 @@ from .messages import (
     PixelUpdate,
     PixelClear,
     PixelFill,
+    PixelFillRandomColor,
     PixelDraw,
     Preset,
     Pause,
@@ -99,7 +100,18 @@ def fill(args):
         "white": PixelFill.Color.WHITE,
         "off": PixelFill.Color.OFF,
     }
+    # If the user requested random fill, delegate to random_fill
+    if getattr(args, "color", None) == "random":
+        return random_fill(args)
+
     color = color_map[args.color]
     offset = getattr(args, "offset", 0)
     packet = PixelFill(color, offset)
+    send(args.device_address, args.char_uuid, packet)
+
+
+def random_fill(args):
+    """Fill pixels from an offset with random colors."""
+    offset = getattr(args, "offset", 0)
+    packet = PixelFillRandomColor(offset)
     send(args.device_address, args.char_uuid, packet)

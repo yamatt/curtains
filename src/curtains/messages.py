@@ -1,5 +1,6 @@
 from enum import Enum
-from tracemalloc import start
+from random import choice
+
 from .packet import TypedPacket, PowerPacketBase, PixelCommandBase
 
 
@@ -200,3 +201,26 @@ class PixelFill(PixelBase):
     @property
     def payload(self) -> bytes:
         return self.UNKNOWN + bytes.join(b"", self.range)
+
+
+class PixelFillRandomColor(PixelFill):
+    """
+    Make all pixels random hue for an offset
+    """
+
+    PACKET_TYPE = TypedPacket.Types.PIXEL_BULK_UPDATE
+
+    def __init__(self, offset: int = 0) -> "PixelFillRandomColor":
+        """
+        Creates a packet to fill all pixels with random hue.
+
+        Maximum pixels in one go 78.
+
+        Parameters:
+            offset: The starting offset (0-399).
+        """
+        self.offset = offset
+
+    @property
+    def color(self) -> PixelBase.Color:
+        return choice(list(self.Color))

@@ -128,8 +128,9 @@ def get_args(args: list = None) -> Namespace:
             "purple",
             "white",
             "off",
+            "random",
         ],
-        help="Color (default: off)",
+        help="Color (default: off). Use 'random' to fill with random hues.",
     )
     fill_parser.add_argument(
         "--offset", "-o", help="Starting offset (0-399)", type=int, default=0
