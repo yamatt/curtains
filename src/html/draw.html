@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>LED Canvas Drawing</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 10px;
+        background-color: #f5f5f5;
+      }
+      
+      h1 {
+        text-align: center;
+        color: #333;
+        margin: 10px 0;
+        font-size: 24px;
+      }
+      
+      .nav-link {
+        display: block;
+        text-align: center;
+        color: #007bff;
+        text-decoration: none;
+        margin: 10px 0;
+        padding: 5px;
+      }
+      
+      .nav-link:hover {
+        text-decoration: underline;
+      }
+      
+      fieldset {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        background-color: white;
+      }
+      
+      legend {
+        font-weight: bold;
+        color: #555;
+        padding: 0 10px;
+      }
+      
+      input[type="text"] {
+        padding: 8px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 100%;
+      }
+      
+      button {
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        width: calc(50% - 10px);
+      }
+      
+      button:hover {
+        background-color: #0056b3;
+      }
+      
+      button:active {
+        background-color: #004085;
+      }
+      
+      .button-row {
+        display: flex;
+        gap: 10px;
+      }
+      
+      #canvas-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin: 15px auto;
+        background-color: #000;
+        border: 2px solid #333;
+        border-radius: 5px;
+        touch-action: none;
+      }
+      
+      #led-canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        cursor: crosshair;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+      
+      .hue-slider-container {
+        position: relative;
+        width: 100%;
+        padding: 10px 0;
+      }
+      
+      .hue-slider {
+        width: 100%;
+        height: 40px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: linear-gradient(to right, 
+          hsl(0, 100%, 50%), 
+          hsl(60, 100%, 50%), 
+          hsl(120, 100%, 50%), 
+          hsl(180, 100%, 50%), 
+          hsl(240, 100%, 50%), 
+          hsl(300, 100%, 50%), 
+          hsl(360, 100%, 50%)
+        );
+        border-radius: 5px;
+        outline: none;
+        cursor: pointer;
+      }
+      
+      .hue-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 40px;
+        background: white;
+        border: 2px solid #333;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      
+      .hue-slider::-moz-range-thumb {
+        width: 25px;
+        height: 40px;
+        background: white;
+        border: 2px solid #333;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      
+      .color-buttons {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0;
+      }
+      
+      .color-btn {
+        flex: 1;
+        height: 50px;
+        border: 2px solid #333;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+        transition: transform 0.1s;
+      }
+      
+      .color-btn:active {
+        transform: scale(0.95);
+      }
+      
+      .color-btn.white {
+        background-color: white;
+        color: black;
+      }
+      
+      .color-btn.black {
+        background-color: black;
+        color: white;
+      }
+      
+      .current-color-display {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0;
+      }
+      
+      .current-color-box {
+        width: 60px;
+        height: 60px;
+        border: 2px solid #333;
+        border-radius: 5px;
+      }
+      
+      .current-color-label {
+        font-size: 14px;
+        color: #555;
+      }
+      
+      .recent-colors {
+        margin-top: 15px;
+      }
+      
+      .recent-colors-label {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 5px;
+      }
+      
+      .recent-colors-list {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      
+      .recent-color-box {
+        width: 50px;
+        height: 50px;
+        border: 2px solid #333;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: transform 0.1s;
+      }
+      
+      .recent-color-box:hover {
+        transform: scale(1.1);
+      }
+      
+      .recent-color-box:active {
+        transform: scale(0.95);
+      }
+      
+      .status {
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f5f5f5;
+        text-align: center;
+        font-size: 14px;
+      }
+      
+      .status.info {
+        color: #0066cc;
+        border-color: #0066cc;
+        background-color: #e6f2ff;
+      }
+      
+      .status.success {
+        color: #008800;
+        border-color: #008800;
+        background-color: #e6ffe6;
+      }
+      
+      .status.error {
+        color: #cc0000;
+        border-color: #cc0000;
+        background-color: #ffe6e6;
+      }
+      
+      label {
+        display: block;
+        margin: 5px 0;
+        font-size: 14px;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🎨 LED Canvas Drawing</h1>
+    
+    <a href="index.html" class="nav-link">← Back to Controls</a>
+    
+    <div id="status" class="status info">Ready. Connect to begin drawing.</div>
+    
+    <fieldset>
+      <legend>📱 Device Connection</legend>
+      <label for="device-name">Device Name Prefix (optional):</label>
+      <input
+        type="text"
+        id="device-name"
+        value="Hello Fairy"
+        placeholder="Hello Fairy"
+      />
+      <label for="char-uuid">Characteristic UUID:</label>
+      <input
+        type="text"
+        id="char-uuid"
+        value="49535343-8841-43f4-a8d4-ecbe34729bb3"
+      />
+      <div class="button-row">
+        <button id="connect-btn">Connect</button>
+        <button id="disconnect-btn">Disconnect</button>
+      </div>
+    </fieldset>
+    
+    <fieldset>
+      <legend>🖌️ Drawing Canvas</legend>
+      <div id="canvas-container">
+        <canvas id="led-canvas" width="20" height="20"></canvas>
+      </div>
+      <div class="button-row">
+        <button id="clear-btn">Clear Canvas</button>
+        <button id="send-all-btn">Send All to Device</button>
+      </div>
+    </fieldset>
+    
+    <fieldset>
+      <legend>🎨 Color Selection</legend>
+      
+      <div class="current-color-display">
+        <div id="current-color" class="current-color-box"></div>
+        <div class="current-color-label">Current Color</div>
+      </div>
+      
+      <div class="color-buttons">
+        <button id="white-btn" class="color-btn white">White</button>
+        <button id="black-btn" class="color-btn black">Off</button>
+      </div>
+      
+      <label for="hue-slider">Hue:</label>
+      <div class="hue-slider-container">
+        <input
+          type="range"
+          id="hue-slider"
+          class="hue-slider"
+          min="0"
+          max="360"
+          value="0"
+        />
+      </div>
+      
+      <div class="recent-colors">
+        <div class="recent-colors-label">Recently Used Colors:</div>
+        <div id="recent-colors-list" class="recent-colors-list"></div>
+      </div>
+    </fieldset>
+  </body>
+</html>
