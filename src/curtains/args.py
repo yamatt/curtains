@@ -2,7 +2,19 @@ from argparse import Namespace, ArgumentParser
 
 from .ble import scan, connect, read, update, listen
 
-from .commands import on, off, write, preset, pause, rgb, pixel, draw, clear, fill
+from .commands import (
+    on,
+    off,
+    write,
+    preset,
+    pause,
+    rgb,
+    pixel,
+    draw,
+    clear,
+    fill,
+    image,
+)
 
 
 def get_args(args: list = None) -> Namespace:
@@ -136,6 +148,11 @@ def get_args(args: list = None) -> Namespace:
         "--offset", "-o", help="Starting offset (0-399)", type=int, default=0
     )
     fill_parser.set_defaults(func=fill)
+
+    # draw: enter drawing mode
+    draw_parser = pixel_subparsers.add_parser("image", help="Write image to pixels.")
+    draw_parser.add_argument("image_path", help="Path to the image file.")
+    draw_parser.set_defaults(func=image)
 
     # draw: enter drawing mode
     draw_parser = pixel_subparsers.add_parser("draw", help="Enter drawing mode.")
