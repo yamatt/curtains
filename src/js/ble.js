@@ -346,9 +346,9 @@ export default class Bluetooth {
     }
     
     // Map hue to approximate color byte
-    // The device appears to use a compressed hue range
-    // Based on the Python code, we use 0-180 range approximately
-    const normalizedHue = (hue / 360) * 180;
+    // The device appears to use a compressed hue range (0-180)
+    const DEVICE_HUE_RANGE = 180;
+    const normalizedHue = (hue / 360) * DEVICE_HUE_RANGE;
     return Math.round(normalizedHue) & 0xFF;
   }
 }

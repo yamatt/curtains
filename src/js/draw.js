@@ -151,6 +151,13 @@ export default class DrawingCanvas {
     }, 50);
   }
 
+  stopBufferProcessing() {
+    if (this.bufferProcessInterval) {
+      clearInterval(this.bufferProcessInterval);
+      this.bufferProcessInterval = null;
+    }
+  }
+
   async processBuffer() {
     if (this.isProcessingBuffer || this.updateBuffer.length === 0 || !this.bluetooth.isConnected()) {
       return;
@@ -381,11 +388,18 @@ export default class DrawingCanvas {
       return;
     }
     
+    // Stop buffer processing during disconnect
+    this.stopBufferProcessing();
+    
     // Clear buffer on disconnect
     this.updateBuffer = [];
     
     this.showStatus("Disconnecting...", "info");
     this.bluetooth.disconnect();
+    
+    // Restart buffer processing after disconnect
+    this.startBufferProcessing();
+    
     this.showStatus("Disconnected successfully", "success");
   }
 
