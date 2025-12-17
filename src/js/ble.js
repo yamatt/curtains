@@ -12,12 +12,20 @@ export default class Bluetooth {
   static FOOTER = 0x64;
   static PACKET_TYPE_POWER = 0x02;
   static PACKET_TYPE_PRESET = 0x03;
+  static PACKET_TYPE_PIXEL_UPDATE = 0xd1;
 
   /**
    * Calculate checksum for packet payload
    */
   static calculateChecksum(payload) {
     return payload.reduce((sum, byte) => (sum + byte) % 256, 0);
+  }
+
+  /**
+   * Calculate checksum including header for pixel packets
+   */
+  static calculateChecksumWithHeader(payload) {
+    return (Bluetooth.HEADER + payload.reduce((sum, byte) => sum + byte, 0)) % 256;
   }
 
   /**
@@ -265,5 +273,82 @@ export default class Bluetooth {
    */
   isConnected() {
     return this.device && this.device.gatt.connected;
+  }
+
+  /**
+   * Build a pixel update packet
+   * @param {number} x - X coordinate (0-19)
+   * @param {number} y - Y coordinate (0-19)
+   * @param {number} colorByte - Color byte value
+   */
+  static buildPixelUpdatePacket(x, y, colorByte) {
+    // Calculate pixel index (row-major order)
+    const index = y * 20 + x;
+    
+    // Build payload: [index_high, index_low, color]
+    const indexHigh = (index >> 8) & 0xFF;
+    const indexLow = index & 0xFF;
+    const payload = [indexHigh, indexLow, colorByte];
+    
+    // Build the packet with proper checksum
+    const packetType = Bluetooth.PACKET_TYPE_PIXEL_UPDATE;
+    const length = payload.length;
+    const fullPayload = [packetType, length, ...payload];
+    const checksum = Bluetooth.calculateChecksumWithHeader(fullPayload);
+    
+    return new Uint8Array([
+      Bluetooth.HEADER,
+      ...fullPayload,
+      checksum
+    ]);
+  }
+
+  /**
+   * Set a single pixel to a color
+   * @param {number} x - X coordinate (0-19)
+   * @param {number} y - Y coordinate (0-19)
+   * @param {number} colorByte - Color byte value
+   */
+  async setPixel(x, y, colorByte) {
+    const packet = Bluetooth.buildPixelUpdatePacket(x, y, colorByte);
+    await this.writePacket(packet);
+  }
+
+  /**
+   * Color constants for pixel drawing
+   */
+  static PixelColors = {
+    RED: 0x00,
+    ORANGE: 0x08,
+    YELLOW: 0x20,
+    GREEN: 0x38,
+    BLUE: 0x50,
+    PURPLE: 0x88,
+    WHITE: 0xFF,
+    OFF: 0xFE
+  };
+
+  /**
+   * Convert HSL to pixel color byte
+   * @param {number} hue - Hue (0-360)
+   * @param {number} saturation - Saturation (0-100)
+   * @param {number} lightness - Lightness (0-100)
+   */
+  static hslToPixelColor(hue, saturation, lightness) {
+    // Handle white
+    if (saturation < 10 && lightness > 90) {
+      return Bluetooth.PixelColors.WHITE;
+    }
+    
+    // Handle off/black
+    if (lightness < 10) {
+      return Bluetooth.PixelColors.OFF;
+    }
+    
+    // Map hue to approximate color byte
+    // The device appears to use a compressed hue range
+    // Based on the Python code, we use 0-180 range approximately
+    const normalizedHue = (hue / 360) * 180;
+    return Math.round(normalizedHue) & 0xFF;
   }
 }
