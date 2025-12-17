@@ -138,6 +138,8 @@ def image(args):
             h, _, l = image.getpixel((x, y))  # just need hue
             if l < 50:
                 color = PixelUpdate.Color.OFF
+            if l >= 200:
+                color = PixelUpdate.Color.WHITE
             else:
                 # Map hue (0-360) to byte (0-180)
                 color = int((h / 360) * 180).to_bytes(1, "big")
