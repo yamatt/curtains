@@ -284,18 +284,18 @@ export default class Bluetooth {
   static buildPixelUpdatePacket(x, y, colorByte) {
     // Calculate pixel index (row-major order)
     const index = y * 20 + x;
-    
+
     // Build payload: [index_high, index_low, color]
     const indexHigh = (index >> 8) & 0xFF;
     const indexLow = index & 0xFF;
     const payload = [indexHigh, indexLow, colorByte];
-    
+
     // Build the packet with proper checksum
     const packetType = Bluetooth.PACKET_TYPE_PIXEL_UPDATE;
     const length = payload.length;
     const fullPayload = [packetType, length, ...payload];
     const checksum = Bluetooth.calculateChecksumWithHeader(fullPayload);
-    
+
     return new Uint8Array([
       Bluetooth.HEADER,
       ...fullPayload,
@@ -339,16 +339,62 @@ export default class Bluetooth {
     if (saturation < 10 && lightness > 90) {
       return Bluetooth.PixelColors.WHITE;
     }
-    
+
     // Handle off/black
     if (lightness < 10) {
       return Bluetooth.PixelColors.OFF;
     }
-    
+
     // Map hue to approximate color byte
     // The device appears to use a compressed hue range (0-180)
     const DEVICE_HUE_RANGE = 180;
     const normalizedHue = (hue / 360) * DEVICE_HUE_RANGE;
     return Math.round(normalizedHue) & 0xFF;
+  }
+
+  /**
+   * Send PixelClear command to clear all pixels on the LED matrix
+   */
+  static buildPixelClearPacket() {
+    // PixelClear command: 0x00 0x64 0x64 0x03
+    const packetType = 0xd0; // Pixel command type
+    const payload = [0x00, 0x64, 0x64, 0x03];
+    const length = payload.length;
+    const checksum = Bluetooth.calculateChecksum(payload);
+    return new Uint8Array([
+      Bluetooth.HEADER,
+      packetType,
+      length,
+      ...payload,
+      checksum
+    ]);
+  }
+
+  async clearPixels() {
+    const packet = Bluetooth.buildPixelClearPacket();
+    await this.writePacket(packet);
+  }
+
+  /**
+   * Send PixelDraw command to enter drawing mode
+   */
+  static buildPixelDrawPacket() {
+    // PixelDraw command: 0x00 0x64 0x64 0x00
+    const packetType = 0xd0; // Pixel command type
+    const payload = [0x00, 0x64, 0x64, 0x00];
+    const length = payload.length;
+    const checksum = Bluetooth.calculateChecksum(payload);
+    return new Uint8Array([
+      Bluetooth.HEADER,
+      packetType,
+      length,
+      ...payload,
+      checksum
+    ]);
+  }
+
+  async enterDrawMode() {
+    const packet = Bluetooth.buildPixelDrawPacket();
+    await this.writePacket(packet);
   }
 }
