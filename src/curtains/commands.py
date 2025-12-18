@@ -111,6 +111,7 @@ def fill(args):
 
     color = color_map[args.color]
     offset = getattr(args, "offset", 0)
+
     packet = PixelFillColor(color, offset)
     send(args.device_address, args.char_uuid, packet)
 
@@ -125,7 +126,7 @@ def random_fill(args):
 def image(args):
     """Send an image to the curtains."""
 
-    image = Image.open(args.image_path).convert("HSL")
+    image = Image.open(args.image_path).convert("HSV")
 
     # check image size
     if image.size != (20, 20):
@@ -133,20 +134,20 @@ def image(args):
 
     pixel_color = []
 
-    for y in range(image.size[1]):
-        for x in range(image.size[0]):
-            h, _, l = image.getpixel((x, y))  # just need hue
-            if l < 50:
-                color = PixelUpdate.Color.OFF
-            if l >= 200:
-                color = PixelUpdate.Color.WHITE
+    for x in range(image.size[0]):
+        for y in range(image.size[1]):
+            hue, saturation, value = image.getpixel((x, y))  # hue, saturation, value
+            if value < 50:
+                color = PixelUpdate.Color.OFF.value
+            elif value >= 200 and saturation < 50:  # high value, low saturation = white
+                color = PixelUpdate.Color.WHITE.value
             else:
-                # Map hue (0-360) to byte (0-180)
-                color = int((h / 360) * 180).to_bytes(1, "big")
+                # Map hue (0-255 in PIL's HSV) to byte (0-180)
+                color = int((hue / 255) * 180).to_bytes(1, "big")
             pixel_color.append(color)
 
     offset = 0
     for pixel_batch in batched(pixel_color, PixelFill.MAX_PIXELS):
-        packet = PixelFillColor(bytes.join(b"", pixel_batch), offset=offset)
+        packet = PixelFill(pixel_batch, offset=offset)
         send(args.device_address, args.char_uuid, packet)
         offset += PixelFill.MAX_PIXELS

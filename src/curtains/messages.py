@@ -176,14 +176,23 @@ class PixelFill(PixelBase):
     MAX_PIXELS = 77
 
     def __init__(self, colors: list, offset: int) -> "PixelFill":
-        self.colors = colors
+        """
+        Creates a packet to fill all pixels with the same colour.
+
+        Maximum pixels in one go 78.
+
+        Parameters:
+            offset: The starting offset (0-399).
+            color: A `PixelBase.Color` enum value representing the color.
+        """
         self.offset = offset
+        self.colors = colors
 
     @property
     def range(self) -> range:
         return [
             (self.colors[i] + (i + self.offset).to_bytes(2, "big"))
-            for i in range(self.MAX_PIXELS)
+            for i in range(min(self.MAX_PIXELS, len(self.colors)))
         ]
 
     @property
@@ -197,22 +206,13 @@ class PixelFillColor(PixelFill):
     """
 
     def __init__(self, color: PixelBase.Color, offset: int = 0) -> "PixelFillColor":
-        """
-        Creates a packet to fill all pixels with the same colour.
-
-        Maximum pixels in one go 78.
-
-        Parameters:
-            offset: The starting offset (0-399).
-            color: A `PixelBase.Color` enum value representing the color.
-        """
         self.offset = offset
-        self.color = color
+        self.color = color.value
 
     @property
     def range(self) -> range:
         return [
-            (self.color.value + (i + self.offset).to_bytes(2, "big"))
+            (self.color + (i + self.offset).to_bytes(2, "big"))
             for i in range(self.MAX_PIXELS)
         ]
 
@@ -237,4 +237,4 @@ class PixelFillRandomColor(PixelFillColor):
 
     @property
     def color(self) -> PixelBase.Color:
-        return choice(list(self.Color))
+        return choice(list(self.Color)).value
