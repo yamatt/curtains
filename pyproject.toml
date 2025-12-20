@@ -2,9 +2,7 @@
 name = "curtains"
 version = "0.1.0"
 description = "Add your description here"
-authors = [
-    { name = "Matt Copperwaite", email = "matthew.copperwaite@ft.com" }
-]
+authors = [{ name = "Matt Copperwaite", email = "matthew.copperwaite@ft.com" }]
 dependencies = [
     "bleak>=0.22.3",
     "click>=8.3.1",
@@ -16,6 +14,7 @@ requires-python = ">= 3.12"
 
 [project.scripts]
 curtains = "curtains.__main__:main"
+snowfall = "scenes.snowfall.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -25,4 +24,4 @@ build-backend = "hatchling.build"
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/curtains"]
+packages = ["src/curtains", "src/scenes"]
