@@ -1,18 +1,11 @@
 from enum import Enum, auto
-from typing import NamedTuple
-from random import choice
+from random import choice, randint
 
 
 class SnowflakeState(Enum):
     FALLING = auto()
     ROLLING = auto()
     LANDED = auto()
-
-
-class Snowflake(NamedTuple):
-    x: int
-    y: int
-    state: SnowflakeState
 
 
 class SnowflakeGrid:
@@ -38,45 +31,52 @@ class SnowflakeGrid:
 
     def is_full(self):
         """Check if the display is full (any column has reached the top)"""
-        for x in range(self.width):
-            if self.column_height(x) >= self.height:
-                return True
-        return False
+        return any([self.column_height(x) >= self.height for x in range(self.width)])
 
     def clear(self):
         """Clear all snowflakes from the grid"""
         self.snowflakes.clear()
 
     def add_snowflake(self):
-        snowflake = Snowflake(
-            x=choice(range(self.width)),
-            y=self.height - 1,
-            state=SnowflakeState.FALLING,
-        )
-        self.snowflakes.append(snowflake)
+        self.snowflakes.append(Snowflake.from_grid(self))
 
     def next(self):
         for snowflake in self.snowflakes:
+            new_y = snowflake.y - 1
             if snowflake.state == SnowflakeState.FALLING:
-                snowflake.y -= 1
-                if (
-                    snowflake.y == 0
-                    or snowflake.y == self.column_height(snowflake.x) - 1
-                ):
+                if new_y <= 0 or self.column_height(snowflake.x) <= new_y:
                     snowflake.state = SnowflakeState.ROLLING
+                else:
+                    snowflake = snowflake.y = new_y
+
             elif snowflake.state == SnowflakeState.ROLLING:
                 if (
-                    self.column_height(snowflake.x - 1) < snowflake.y
-                    and self.column_height(snowflake.x + 1) < snowflake.y
+                    self.column_height(snowflake.x - 1) < new_y
+                    and self.column_height(snowflake.x + 1) < new_y
                 ):
                     direction = choice([-1, 1])
                     snowflake.x += direction
-                    snowflake.y += 1
-                elif self.column_height(snowflake.x - 1) < snowflake.y:
+                    snowflake.y = new_y
+                elif self.column_height(snowflake.x - 1) < new_y:
                     snowflake.x -= 1
-                    snowflake.y += 1
-                elif self.column_height(snowflake.x + 1) < snowflake.y:
+                    snowflake.y = new_y
+                elif self.column_height(snowflake.x + 1) < new_y:
                     snowflake.x += 1
-                    snowflake.y += 1
+                    snowflake.y = new_y
                 else:
                     snowflake.state = SnowflakeState.LANDED
+
+
+class Snowflake:
+    @classmethod
+    def from_grid(cls, grid: SnowflakeGrid):
+        return cls(
+            x=randint(0, grid.width - 1),
+            y=grid.height - 1,
+            state=SnowflakeState.FALLING,
+        )
+
+    def __init__(self, x: int, y: int, state: SnowflakeState = SnowflakeState.FALLING):
+        self.x = x
+        self.y = y
+        self.state = state
