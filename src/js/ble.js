@@ -282,8 +282,8 @@ export default class Bluetooth {
    * @param {number} colorByte - Color byte value
    */
   static buildPixelUpdatePacket(x, y, colorByte) {
-    // Calculate pixel index (row-major order)
-    const index = y * 20 + x;
+    // Calculate pixel index (column-major order for LED matrix: top-to-bottom, then left-to-right)
+    const index = x * 20 + y;
 
     // Build payload: [index_high, index_low, color]
     const indexHigh = (index >> 8) & 0xFF;
