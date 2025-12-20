@@ -9,7 +9,7 @@ from .messages import (
     Off,
     PixelUpdate,
     PixelClear,
-    PixelFillOffset,
+    PixelFillColors,
     PixelFillColor,
     PixelFillRandomColor,
     PixelDraw,
@@ -147,7 +147,7 @@ def image(args):
             pixel_color.append(color)
 
     offset = 0
-    for pixel_batch in batched(pixel_color, PixelFillOffset.MAX_PIXELS):
-        packet = PixelFillOffset(pixel_batch, offset=offset)
+    for pixel_batch in batched(pixel_color, PixelFillColors.MAX_PIXELS):
+        packet = PixelFillColors(pixel_batch, offset=offset)
         send(args.device_address, args.char_uuid, packet)
-        offset += PixelFillOffset.MAX_PIXELS
+        offset += PixelFillColors.MAX_PIXELS

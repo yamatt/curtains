@@ -175,14 +175,13 @@ class PixelFillBase(PixelBase):
 
     MAX_PIXELS = 77
 
-    def __init__(self, colors: list) -> "PixelFill":
+    def __init__(self, colors: list) -> "PixelFillBase":
         """
         Creates a packet to fill all pixels with the same colour.
 
         Maximum pixels in one go 78.
 
         Parameters:
-            offset: The starting offset (0-399).
             color: A `PixelBase.Color` enum value representing the color.
         """
         self.colors = colors
@@ -192,24 +191,24 @@ class PixelFillBase(PixelBase):
         return self.UNKNOWN + bytes.join(b"", self.range)
 
 
-class PixelFillOffset(PixelFillBase):
+class PixelFillColors(PixelFillBase):
     """
     Make all pixels the same colour for an offset
     """
 
-    def __init__(self, color: PixelBase.Color, offset: int = 0) -> "PixelFillOffset":
+    def __init__(self, colors: list, offset: int = 0) -> "PixelFillColors":
         self.offset = offset
-        self.color = color.value
+        self.colors = colors
 
     @property
     def range(self) -> range:
         return [
-            (self.color + (i + self.offset).to_bytes(2, "big"))
-            for i in range(self.MAX_PIXELS)
+            (color + (i + self.offset).to_bytes(2, "big"))
+            for i, color in enumerate(self.colors)
         ]
 
 
-class PixelFillColor(PixelFill):
+class PixelFillColor(PixelFillBase):
     """
     Make all pixels the same colour for an offset
     """
