@@ -162,12 +162,12 @@ green bottom right: AAD103018F3C4A
 
 All black apart from pixels above
 
-AAD004 00646403 49
+AAD0 04 00646403 49
 
-AAD004 00646400 46 << setting the drawing mode
+AAD0 04 00646400 46 << setting the drawing mode
 
 AADA
-    EE
+    EE << length
         010000 << maybe a header?
         000001 << first pixel is red
         FE0002
