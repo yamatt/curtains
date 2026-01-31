@@ -125,9 +125,3 @@ class PixelCommandBase(TypedPacket):
 
     def __init__(self):
         super().__init__(self.COMMAND)
-
-
-class PixelClearPacket(PixelCommandBase):
-    @property
-    def payload(self) -> bytes:
-        return b"\x00\x64\x64\x03"
