@@ -11,23 +11,34 @@ class Controller:
     def __init__(self, device_address: str, char_uuid: str):
         self.device_address = device_address
         self.char_uuid = char_uuid
+        self.client = None
 
-    @cached_property
-    def client(self):
-        return BleakClient(self.device_address)
+    async def connect(self):
+        """Establish connection to the BLE device"""
+        self.client = BleakClient(self.device_address)
+        await self.client.connect()
 
-    def write(self, packet: Packet):
-        self.client.write_gatt_char(self.char_uuid, packet.to_bytes())
+    async def disconnect(self):
+        """Disconnect from the BLE device"""
+        if self.client and self.client.is_connected:
+            await self.client.disconnect()
 
-    def clear(self):
-        self.write(PixelClear())
+    async def write(self, packet: Packet):
+        if not self.client or not self.client.is_connected:
+            raise RuntimeError("Not connected to device")
+        print(f"Writing packet: {packet.to_str()}")
+        await self.client.write_gatt_char(self.char_uuid, packet.to_bytes())
 
-    def draw_mode(self):
-        self.write(PixelDraw())
+    async def clear(self):
+        await self.write(PixelClear())
 
-    def start(self):
-        self.clear()
-        self.draw_mode()
+    async def draw_mode(self):
+        await self.write(PixelDraw())
+
+    async def start(self):
+        await self.connect()
+        await self.clear()
+        await self.draw_mode()
 
 
 class SnowfallUpdatePacket(PixelFillBase):
