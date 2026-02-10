@@ -14,7 +14,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "webpack": "^5.105.0"
+    "webpack": "^5.105.1"
   },
   "devDependencies": {
     "html-webpack-plugin": "^5.6.6",
