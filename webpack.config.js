@@ -6,7 +6,8 @@ module.exports = {
   mode: "production",
   entry: {
     main: "./src/js/index.js",
-    draw: "./src/js/draw-entry.js"
+    draw: "./src/js/draw-entry.js",
+    pong: "./src/js/pong-entry.js"
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -22,6 +23,11 @@ module.exports = {
       template: "./src/html/draw.html",
       filename: "draw.html",
       chunks: ["draw"]
+    }),
+    new HtmlWebpackPlugin({
+      template: "./src/html/pong.html",
+      filename: "pong.html",
+      chunks: ["pong"]
     })
   ],
 };
