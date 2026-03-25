@@ -334,7 +334,7 @@ export default class PongGame {
       try {
         await this.bluetooth.setPixel(update.x, update.y, update.colorByte);
       } catch (err) {
-        console.error("BLE write error:", err);
+        this.showStatus(`BLE write error: ${err.message}`, "error");
         break;
       }
     }
@@ -346,7 +346,7 @@ export default class PongGame {
     try {
       await this.bluetooth.clearPixels();
     } catch (err) {
-      console.error("clearPixels error:", err);
+      this.showStatus(`Failed to clear display: ${err.message}`, "error");
     }
     const pixels = this.getGamePixels();
     pixels.forEach((colorByte, key) => {
