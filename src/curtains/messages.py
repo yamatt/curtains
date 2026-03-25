@@ -160,7 +160,9 @@ class PixelUpdate(PixelBase):
 
     @property
     def index(self) -> int:
-        return self.y * 20 + self.x
+        # Column-major order: each column runs top-to-bottom, columns go left-to-right.
+        # Matches the JavaScript buildPixelUpdatePacket: index = x * 20 + y.
+        return self.x * 20 + self.y
 
     @property
     def payload(self) -> bytes:
@@ -216,7 +218,8 @@ class MultiPixelUpdate(PixelBase):
     def payload(self) -> bytes:
         data = b""
         for x, y, color in self.pixels:
-            index = y * 20 + x
+            # Column-major order: index = x * 20 + y (matches JavaScript and hardware).
+            index = x * 20 + y
             data += index.to_bytes(2, "big") + color.value
         return data
 
