@@ -146,11 +146,29 @@ export default class PongGame {
       this.ballVel.y = -Math.abs(this.ballVel.y);
     }
 
+    // Score: ball touches left wall (behind player paddle) — checked before paddle collision
+    // so a ball at the back wall cannot be intercepted by the paddle.
+    if (this.ball.x <= 0) {
+      this.aiScore++;
+      this.updateScore();
+      this.resetBall();
+      return;
+    }
+
+    // Score: ball touches right wall (behind AI paddle)
+    if (this.ball.x >= this.GRID_W - 1) {
+      this.playerScore++;
+      this.updateScore();
+      this.resetBall();
+      return;
+    }
+
     const ballGridX = Math.round(this.ball.x);
     const ballGridY = Math.round(this.ball.y);
 
-    // Player paddle collision (left)
-    if (ballGridX <= this.PLAYER_X && this.ballVel.x < 0) {
+    // Player paddle collision (left): only intercept if ball is still in the catch zone
+    // (within half a cell of the paddle column) to avoid false deflections from behind.
+    if (this.ball.x >= this.PLAYER_X - 0.5 && ballGridX <= this.PLAYER_X && this.ballVel.x < 0) {
       if (ballGridY >= this.playerY && ballGridY < this.playerY + this.PADDLE_H) {
         const relHit = (ballGridY - this.playerY) / (this.PADDLE_H - 1) - 0.5;
         const { vx, vy } = this.bounceBall(relHit, 1);
@@ -160,8 +178,8 @@ export default class PongGame {
       }
     }
 
-    // AI paddle collision (right)
-    if (ballGridX >= this.AI_X && this.ballVel.x > 0) {
+    // AI paddle collision (right): same guard against catching the ball from behind.
+    if (this.ball.x <= this.AI_X + 0.5 && ballGridX >= this.AI_X && this.ballVel.x > 0) {
       const aiPaddleTop = Math.round(this.aiY);
       if (ballGridY >= aiPaddleTop && ballGridY < aiPaddleTop + this.PADDLE_H) {
         const relHit = (ballGridY - aiPaddleTop) / (this.PADDLE_H - 1) - 0.5;
@@ -170,22 +188,6 @@ export default class PongGame {
         this.ballVel.x = vx;
         this.ballVel.y = vy;
       }
-    }
-
-    // Score: ball past left edge
-    if (this.ball.x < 0) {
-      this.aiScore++;
-      this.updateScore();
-      this.resetBall();
-      return;
-    }
-
-    // Score: ball past right edge
-    if (this.ball.x >= this.GRID_W) {
-      this.playerScore++;
-      this.updateScore();
-      this.resetBall();
-      return;
     }
 
     this.moveAI();
