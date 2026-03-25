@@ -59,16 +59,16 @@ async def run_snowfall(mac_address, height):
 
             # Turn off LEDs that no longer have snowflakes
             for x, y in leds_to_turn_off:
-                # Calculate index (column-major order: x * 20 + y)
-                index = x * HEIGHT + y
+                # Column-major index. The grid uses y=0 as the ground (bottom) but the
+                # physical display has y=0 at the top, so invert y before indexing.
+                index = x * HEIGHT + (HEIGHT - 1 - y)
                 updates.append(
                     SnowfallUpdatePacket.OFF.value + index.to_bytes(2, "big")
                 )
 
             # Turn on LEDs that now have snowflakes
             for x, y in leds_to_turn_on:
-                # Calculate index (column-major order: x * 20 + y)
-                index = x * HEIGHT + y
+                index = x * HEIGHT + (HEIGHT - 1 - y)
                 updates.append(
                     SnowfallUpdatePacket.WHITE.value + index.to_bytes(2, "big")
                 )

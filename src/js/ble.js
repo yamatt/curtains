@@ -315,6 +315,40 @@ export default class Bluetooth {
   }
 
   /**
+   * Build a packet that updates multiple pixels in one BLE write.
+   * The BLE MTU limits a characteristic write to 20 bytes; with 4 bytes of
+   * packet overhead (header + type + length + checksum) that leaves 16 bytes
+   * for payload, fitting up to 5 pixels (3 bytes each).
+   * @param {Array<{x: number, y: number, colorByte: number}>} updates
+   */
+  static buildMultiPixelUpdatePacket(updates) {
+    const payload = [];
+    for (const { x, y, colorByte } of updates) {
+      const index = x * 20 + y;
+      payload.push((index >> 8) & 0xFF, index & 0xFF, colorByte);
+    }
+    const packetType = Bluetooth.PACKET_TYPE_PIXEL_UPDATE;
+    const length = payload.length;
+    const fullPayload = [packetType, length, ...payload];
+    const checksum = Bluetooth.calculateChecksumWithHeader(fullPayload);
+    return new Uint8Array([Bluetooth.HEADER, ...fullPayload, checksum]);
+  }
+
+  /**
+   * Send multiple pixel updates, batching up to 5 pixels per BLE packet.
+   * @param {Array<{x: number, y: number, colorByte: number}>} updates
+   */
+  async setPixels(updates) {
+    // Max 5 pixels per packet to stay within the 20-byte BLE MTU
+    const MAX_PER_PACKET = 5;
+    for (let i = 0; i < updates.length; i += MAX_PER_PACKET) {
+      const batch = updates.slice(i, i + MAX_PER_PACKET);
+      const packet = Bluetooth.buildMultiPixelUpdatePacket(batch);
+      await this.writePacket(packet);
+    }
+  }
+
+  /**
    * Color constants for pixel drawing
    */
   static PixelColors = {

@@ -118,4 +118,6 @@ class Snowflake:
 
     @property
     def index(self) -> int:
-        return self.x * self.grid.height + self.y
+        # Column-major with y-inversion: the grid uses y=0 as ground (bottom) but
+        # the physical display has y=0 at the top.
+        return self.x * self.grid.height + (self.grid.height - 1 - self.y)
