@@ -167,6 +167,60 @@ class PixelUpdate(PixelBase):
         return self.index.to_bytes(2, "big") + self.color.value
 
 
+class MultiPixelUpdate(PixelBase):
+    """
+    Pack up to 5 pixel updates into a single PIXEL_UPDATE (0xd1) packet.
+
+    The standard BLE MTU limits a characteristic write to 20 bytes; 4 bytes of
+    packet overhead (header + type + length + checksum) leave 16 bytes for
+    payload, fitting at most 5 pixels at 3 bytes each.  To send more than 5
+    pixels, split them across multiple packets — use ``MultiPixelUpdate.batched()``.
+
+    Example::
+
+        # Light up three pixels at once
+        packet = MultiPixelUpdate([
+            (0, 0, PixelBase.Color.RED),
+            (1, 0, PixelBase.Color.GREEN),
+            (2, 0, PixelBase.Color.BLUE),
+        ])
+
+        # Send a larger list automatically batched into ≤5-pixel packets
+        pixels = [(x, 0, PixelBase.Color.WHITE) for x in range(10)]
+        for packet in MultiPixelUpdate.batched(pixels):
+            send(device_address, char_uuid, packet)
+    """
+
+    PACKET_TYPE = TypedPacket.Types.PIXEL_UPDATE
+    MAX_PER_PACKET = 5  # floor((20 byte MTU - 4 byte overhead) / 3 bytes per pixel)
+
+    @classmethod
+    def batched(cls, pixels: list):
+        """Yield successive MultiPixelUpdate packets of at most MAX_PER_PACKET pixels."""
+        for i in range(0, len(pixels), cls.MAX_PER_PACKET):
+            yield cls(pixels[i : i + cls.MAX_PER_PACKET])
+
+    def __init__(self, pixels: list) -> "MultiPixelUpdate":
+        """
+        Parameters:
+            pixels: List of ``(x, y, color)`` tuples, at most ``MAX_PER_PACKET`` entries.
+        """
+        if len(pixels) > self.MAX_PER_PACKET:
+            raise ValueError(
+                f"MultiPixelUpdate accepts at most {self.MAX_PER_PACKET} pixels per packet; "
+                f"got {len(pixels)}. Use MultiPixelUpdate.batched() to split larger lists."
+            )
+        self.pixels = pixels
+
+    @property
+    def payload(self) -> bytes:
+        data = b""
+        for x, y, color in self.pixels:
+            index = y * 20 + x
+            data += index.to_bytes(2, "big") + color.value
+        return data
+
+
 class PixelFillBase(PixelBase):
 
     UNKNOWN = b"\x01\x00\x00"

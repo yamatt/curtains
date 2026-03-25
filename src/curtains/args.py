@@ -117,6 +117,25 @@ def get_args(args: list = None) -> Namespace:
     )
     single_parser.set_defaults(func=pixel)
 
+    # multi: set several pixels in one or more packets
+    COLORS = ["red", "orange", "yellow", "green", "blue", "purple", "white", "off"]
+    multi_parser = pixel_subparsers.add_parser(
+        "multi",
+        help="Set multiple pixels in a single BLE packet (up to 5 per packet).",
+    )
+    multi_parser.add_argument(
+        "pixels",
+        nargs="+",
+        metavar="x,y,color",
+        help=(
+            "One or more pixels as x,y,color (e.g. 0,0,red 1,0,green 2,0,blue). "
+            f"Valid colors: {', '.join(COLORS)}. "
+            "Up to 5 pixels are packed into each BLE packet; larger lists are "
+            "automatically split."
+        ),
+    )
+    multi_parser.set_defaults(func=pixel)
+
     # clear: clear drawing mode (or clear buffer)
     clear_parser = pixel_subparsers.add_parser(
         "clear", help="Clear pixels (controller-specific)."

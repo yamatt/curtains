@@ -8,6 +8,7 @@ from .messages import (
     On,
     Off,
     PixelUpdate,
+    MultiPixelUpdate,
     PixelClear,
     PixelFillColors,
     PixelFillColor,
@@ -68,18 +69,24 @@ def pixel(args):
     if args.pixel_command == "single":
         color = color_map[args.color]
         packet = PixelUpdate(args.x, args.y, color)
+        send(args.device_address, args.char_uuid, packet)
     elif args.pixel_command == "clear":
-        packet = PixelClear()
+        send(args.device_address, args.char_uuid, PixelClear())
     elif args.pixel_command == "fill":
         color = color_map[args.color]
         offset = getattr(args, "offset", 0)
-        packet = PixelFillColor(color, offset)
+        send(args.device_address, args.char_uuid, PixelFillColor(color, offset))
     elif args.pixel_command == "draw":
-        packet = PixelDraw()
+        send(args.device_address, args.char_uuid, PixelDraw())
+    elif args.pixel_command == "multi":
+        pixels = []
+        for token in args.pixels:
+            x_str, y_str, color_str = token.split(",")
+            pixels.append((int(x_str), int(y_str), color_map[color_str.lower()]))
+        for packet in MultiPixelUpdate.batched(pixels):
+            send(args.device_address, args.char_uuid, packet)
     else:
         raise ValueError(f"Unknown pixel subcommand: {args.pixel_command}")
-
-    send(args.device_address, args.char_uuid, packet)
 
 
 def draw(args):
