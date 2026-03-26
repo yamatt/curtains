@@ -143,27 +143,38 @@
         font-size: 14px;
         color: #555;
       }
+      .app-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 15px 0;
+      }
+      .app-link {
+        display: block;
+        padding: 12px 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background-color: #f8f9fa;
+        color: #007bff;
+        text-decoration: none;
+        text-align: center;
+        font-size: 15px;
+        transition: background-color 0.15s;
+      }
+      .app-link:hover {
+        background-color: #e2ecff;
+        border-color: #007bff;
+      }
     </style>
   </head>
   <body>
     <h1>🪟 LED Curtain Control</h1>
-    
-    <div style="text-align: center; margin: 15px 0;">
-      <a href="draw.html" style="color: #007bff; text-decoration: none; font-size: 16px;">
-        🎨 Open Drawing Canvas →
-      </a>
-      &nbsp;&nbsp;
-      <a href="pong.html" style="color: #007bff; text-decoration: none; font-size: 16px;">
-        🏓 Play Pong →
-      </a>
-      &nbsp;&nbsp;
-      <a href="breakout.html" style="color: #007bff; text-decoration: none; font-size: 16px;">
-        🧱 Play Breakout →
-      </a>
-      &nbsp;&nbsp;
-      <a href="tetris.html" style="color: #007bff; text-decoration: none; font-size: 16px;">
-        🟦 Play Tetris →
-      </a>
+
+    <div class="app-grid">
+      <a href="draw.html" class="app-link">🎨 Drawing Canvas</a>
+      <a href="pong.html" class="app-link">🏓 Pong</a>
+      <a href="breakout.html" class="app-link">🧱 Breakout</a>
+      <a href="tetris.html" class="app-link">🟦 Tetris</a>
     </div>
     
     <form id="controls">
