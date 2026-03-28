@@ -207,6 +207,19 @@
 
     <div id="status" class="status info">Connect to your curtain device, then tap Start.</div>
 
+    <!-- Device connection -->
+    <fieldset>
+      <legend>📱 Device Connection</legend>
+      <label for="device-name">Device Name Prefix (optional):</label>
+      <input type="text" id="device-name" value="Hello Fairy" placeholder="Hello Fairy" />
+      <label for="char-uuid">Characteristic UUID:</label>
+      <input type="text" id="char-uuid" value="49535343-8841-43f4-a8d4-ecbe34729bb3" />
+      <div class="button-row">
+        <button id="connect-btn">Connect</button>
+        <button id="disconnect-btn">Disconnect</button>
+      </div>
+    </fieldset>
+
     <!-- Score -->
     <div class="score-board">
       <div>
@@ -223,19 +236,6 @@
     <div id="preview-container">
       <canvas id="preview-canvas" width="20" height="20"></canvas>
     </div>
-
-    <!-- Device connection -->
-    <fieldset>
-      <legend>📱 Device Connection</legend>
-      <label for="device-name">Device Name Prefix (optional):</label>
-      <input type="text" id="device-name" value="Hello Fairy" placeholder="Hello Fairy" />
-      <label for="char-uuid">Characteristic UUID:</label>
-      <input type="text" id="char-uuid" value="49535343-8841-43f4-a8d4-ecbe34729bb3" />
-      <div class="button-row">
-        <button id="connect-btn">Connect</button>
-        <button id="disconnect-btn">Disconnect</button>
-      </div>
-    </fieldset>
 
     <!-- Game controls -->
     <fieldset>
