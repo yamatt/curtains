@@ -9,7 +9,8 @@ module.exports = {
     draw: "./src/js/draw-entry.js",
     pong: "./src/js/pong-entry.js",
     breakout: "./src/js/breakout-entry.js",
-    tetris: "./src/js/tetris-entry.js"
+    tetris: "./src/js/tetris-entry.js",
+    meteors: "./src/js/meteors-entry.js"
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -40,6 +41,11 @@ module.exports = {
       template: "./src/html/tetris.html",
       filename: "tetris.html",
       chunks: ["tetris"]
+    }),
+    new HtmlWebpackPlugin({
+      template: "./src/html/meteors.html",
+      filename: "meteors.html",
+      chunks: ["meteors"]
     })
   ],
 };
