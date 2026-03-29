@@ -29,10 +29,11 @@ export default class TetrisGame {
   constructor() {
     this.bluetooth = new Bluetooth();
 
-    this.GRID_W = 20;    // LED display width in pixels
-    this.GRID_H = 20;    // LED display height in pixels
-    this.TETRIS_W = 10;  // Tetris play-field width in cells (each cell = 2 LED pixels wide)
-    this.TETRIS_H = 20;  // Tetris play-field height in cells (each cell = 1 LED pixel tall)
+    this.GRID_W = 20;        // LED display width in pixels
+    this.GRID_H = 20;        // LED display height in pixels
+    this.TETRIS_W = 10;      // Tetris play-field width in cells (each cell = 1 LED pixel wide)
+    this.TETRIS_H = 20;      // Tetris play-field height in cells (each cell = 1 LED pixel tall)
+    this.TETRIS_OFFSET = 5;  // Horizontal LED pixel offset to centre the 10-cell play-field in the 20-pixel display
 
     // Game state
     this.board = this.emptyBoard();       // 1 where a placed cell exists, 0 elsewhere
@@ -275,19 +276,31 @@ export default class TetrisGame {
 
   /**
    * Map Tetris cell (tc, tr) to LED pixels.
-   * Each Tetris column occupies 2 LED pixels horizontally; rows map 1-to-1.
+   * Each Tetris column occupies 1 LED pixel; the 10-cell play-field is centred
+   * within the 20-pixel display using TETRIS_OFFSET pixels of padding on each side.
+   * Dotted white border lines are drawn one pixel outside the play-field edges.
    */
   getGamePixels() {
     const pixels = new Map();
+    const offset = this.TETRIS_OFFSET;
+
+    // Dotted white border lines along the sides of the play-field (every other row)
+    const leftBorder = offset - 1;
+    const rightBorder = offset + this.TETRIS_W;
+    for (let row = 0; row < this.TETRIS_H; row++) {
+      if (row % 2 === 0) {
+        pixels.set(`${leftBorder},${row}`, Bluetooth.PixelColors.WHITE);
+        pixels.set(`${rightBorder},${row}`, Bluetooth.PixelColors.WHITE);
+      }
+    }
 
     // Placed board cells
     for (let row = 0; row < this.TETRIS_H; row++) {
       for (let col = 0; col < this.TETRIS_W; col++) {
         if (this.board[row][col]) {
-          const ledX = col * 2;
+          const ledX = col + offset;
           const color = this.boardColors[row][col];
           pixels.set(`${ledX},${row}`, color);
-          pixels.set(`${ledX + 1},${row}`, color);
         }
       }
     }
@@ -298,9 +311,8 @@ export default class TetrisGame {
         const col = this.currentPos.x + dc;
         const row = this.currentPos.y + dr;
         if (col >= 0 && col < this.TETRIS_W && row >= 0 && row < this.TETRIS_H) {
-          const ledX = col * 2;
+          const ledX = col + offset;
           pixels.set(`${ledX},${row}`, this.currentColor);
-          pixels.set(`${ledX + 1},${row}`, this.currentColor);
         }
       }
     }
