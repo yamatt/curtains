@@ -44,7 +44,7 @@ jobs:
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main'
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
       - name: Upload build artifact (PR)
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v7
