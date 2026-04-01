@@ -31,7 +31,7 @@ export default class TetrisGame {
 
     this.GRID_W = 20;    // LED display width in pixels
     this.GRID_H = 20;    // LED display height in pixels
-    this.TETRIS_W = 10;  // Tetris play-field width in cells (each cell = 2 LED pixels wide)
+    this.TETRIS_W = 10;  // Tetris play-field width in cells (each cell = 1 LED pixel wide)
     this.TETRIS_H = 20;  // Tetris play-field height in cells (each cell = 1 LED pixel tall)
 
     // Game state
@@ -275,19 +275,25 @@ export default class TetrisGame {
 
   /**
    * Map Tetris cell (tc, tr) to LED pixels.
-   * Each Tetris column occupies 2 LED pixels horizontally; rows map 1-to-1.
+   * Each Tetris column occupies 1 LED pixel horizontally; rows map 1-to-1.
+   * Play area is centered: columns 0-9 map to LED pixels 5-14.
    */
   getGamePixels() {
     const pixels = new Map();
+
+    // Draw vertical borders on the sides of the play area
+    for (let row = 0; row < this.TETRIS_H; row++) {
+      pixels.set(`4,${row}`, Bluetooth.PixelColors.WHITE);
+      pixels.set(`15,${row}`, Bluetooth.PixelColors.WHITE);
+    }
 
     // Placed board cells
     for (let row = 0; row < this.TETRIS_H; row++) {
       for (let col = 0; col < this.TETRIS_W; col++) {
         if (this.board[row][col]) {
-          const ledX = col * 2;
+          const ledX = col + 5;  // Center the 10-column play area in the 20-pixel display
           const color = this.boardColors[row][col];
           pixels.set(`${ledX},${row}`, color);
-          pixels.set(`${ledX + 1},${row}`, color);
         }
       }
     }
@@ -298,9 +304,8 @@ export default class TetrisGame {
         const col = this.currentPos.x + dc;
         const row = this.currentPos.y + dr;
         if (col >= 0 && col < this.TETRIS_W && row >= 0 && row < this.TETRIS_H) {
-          const ledX = col * 2;
+          const ledX = col + 5;  // Center the piece in the display
           pixels.set(`${ledX},${row}`, this.currentColor);
-          pixels.set(`${ledX + 1},${row}`, this.currentColor);
         }
       }
     }
