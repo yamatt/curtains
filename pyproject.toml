@@ -6,7 +6,7 @@ authors = [{ name = "Matt Copperwaite", email = "matthew.copperwaite@ft.com" }]
 dependencies = [
     "bleak>=0.22.3",
     "click>=8.3.1",
-    "pillow>=12.0.0",
+    "pillow>=12.2.0",
     "structlog>=25.5.0",
 ]
 readme = "README.md"
