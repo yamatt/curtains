@@ -5,7 +5,7 @@ description = "Add your description here"
 authors = [{ name = "Matt Copperwaite", email = "matthew.copperwaite@ft.com" }]
 dependencies = [
     "bleak>=0.22.3",
-    "click>=8.3.1",
+    "click>=8.3.2",
     "pillow>=12.2.0",
     "structlog>=25.5.0",
 ]
