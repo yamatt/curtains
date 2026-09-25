@@ -31,7 +31,7 @@ jobs:
           node-version-file: package.json
       - name: Build
         run: |
-          npm install --include=dev
+          npm ci
           npm run build
       - name: Setup Pages
         if: github.ref == 'refs/heads/main'
