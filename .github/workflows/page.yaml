@@ -11,6 +11,7 @@ on:
       - "src/js/*"
       - "webpack.config.js"
       - "package.json"
+      - "package-lock.json"
 
 permissions:
   contents: read
