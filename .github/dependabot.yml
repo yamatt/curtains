@@ -5,24 +5,48 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
+    assignees:
+      - yamatt
+    groups:
+      minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
     labels:
-      - "dependabot"
-      - "python"
+      - dependency
+      - python
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
+    assignees:
+      - yamatt
+    groups:
+      minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
     labels:
-      - "dependabot"
-      - "github-actions"
+      - dependency
+      - github-actions
 
   # NPM dependencies
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
+    assignees:
+      - yamatt
+    groups:
+      minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
     labels:
-      - "dependabot"
-      - "npm"
+      - dependency
+      - npm
